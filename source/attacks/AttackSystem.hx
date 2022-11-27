@@ -7,6 +7,7 @@ import command.Command;
 import ecs.Universe;
 import ecs.System;
 import haxe.ds.Vector;
+import attacks.AttackCommand;
 
 class AttackSystem extends System {
 	
@@ -25,9 +26,9 @@ class AttackSystem extends System {
 	override function onEnabled() {
 		super.onEnabled();
 		
-		Command.register(AttackCommand.CLICK(Entity.none), handleAtkC);
-		Command.register(AttackCommand.UNLOCK(Entity.none, 0), handleAtkC);
-		Command.register(AttackCommand.DEBUFF(Entity.none, null), handleAtkC);
+		Command.register(CLICK(Entity.none), handleAtkC);
+		Command.register(UNLOCK(Entity.none, 0), handleAtkC);
+		Command.register(DEBUFF(Entity.none, null), handleAtkC);
 	}
 	
 	function handleAtkC(atkc:AttackCommand) {
@@ -47,11 +48,17 @@ class AttackSystem extends System {
 					case DMG(amount):
 						
 						var total = amount;
+						var crit = false;
+						
 						fetch(attackInfos, caster, {
-							total = Std.int(total * critInfo.getMultiplier());
+							
+							if (Math.random() < critInfo.getChance()) {
+								total = Std.int(total * critInfo.mult);
+								crit = true;
+							}
 						});
 						
-						Command.queue(AttackCommand.LOG(caster, total));
+						Command.queue(LOG(caster, total, crit));
 						
 					case ATTACK(ba):
 						ba.refreshReps();

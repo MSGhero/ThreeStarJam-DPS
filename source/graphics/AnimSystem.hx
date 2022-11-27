@@ -37,7 +37,7 @@ class AnimSystem extends System {
 		fetch(spriteAnims, entity, {
 			sprite.t = anim.currFrame;
 			anim.onFrame = () -> sprite.t = anim.currFrame;
-			Command.queue(TimingCommand.ADD_UPDATER(entity, anim.updater));
+			Command.queue(ADD_UPDATER(entity, anim.updater));
 		});
 	}
 	
@@ -46,7 +46,7 @@ class AnimSystem extends System {
 		fetch(bitmapAnims, entity, {
 			bitmap.tile = anim.currFrame;
 			anim.onFrame = () -> bitmap.tile = anim.currFrame;
-			Command.queue(TimingCommand.ADD_UPDATER(entity, anim.updater));
+			Command.queue(ADD_UPDATER(entity, anim.updater));
 		});
 	}
 }

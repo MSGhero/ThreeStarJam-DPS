@@ -25,7 +25,7 @@ class MouseSystem extends System {
 		
 		switch (e.kind) {
 			case EMove:
-				Command.queue(CursorCommand.POSITION_ABSOLUTE(e.relX, e.relY));
+				Command.queue(POSITION_ABSOLUTE(e.relX, e.relY));
 			default:
 		}
 	}

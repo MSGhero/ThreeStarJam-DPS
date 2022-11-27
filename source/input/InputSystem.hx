@@ -4,6 +4,7 @@ import haxe.ds.IntMap;
 import command.Command;
 import ecs.Universe;
 import ecs.System;
+import input.InputCommand;
 
 class InputSystem extends System {
 	
@@ -25,9 +26,9 @@ class InputSystem extends System {
 	override function onEnabled() {
 		super.onEnabled();
 		
-		Command.register(InputCommand.ADD_INPUT(null, DEBUG), handleInput);
-		Command.register(InputCommand.ENABLE_INPUT(DEBUG), handleInput);
-		Command.register(InputCommand.DISABLE_INPUT(DEBUG), handleInput);
+		Command.register(ADD_INPUT(null, DEBUG), handleInput);
+		Command.register(ENABLE_INPUT(DEBUG), handleInput);
+		Command.register(DISABLE_INPUT(DEBUG), handleInput);
 	}
 	
 	function handleInput(ic:InputCommand) {

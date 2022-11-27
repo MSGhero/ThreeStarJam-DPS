@@ -53,15 +53,15 @@ abstract Mage(BaseChar) to BaseChar {
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),
-			onSelect: () -> Command.queue(AttackCommand.CLICK(this))
+			onSelect: () -> Command.queue(CLICK(this))
 		};
 		
 		var critInfo = new CritInfo(0.25, 2);
 		
-		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, Character.MAGE); // sprite already created
+		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xffffb600, Character.MAGE); // sprite already created
 		Command.queueMany(
-			AttackCommand.UNLOCK(this, BASIC),
-			TimingCommand.ADD_UPDATER(this, critInfo.updater)
+			UNLOCK(this, BASIC),
+			ADD_UPDATER(this, critInfo.updater)
 		);
 	}
 }

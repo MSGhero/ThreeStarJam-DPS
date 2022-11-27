@@ -11,6 +11,6 @@ abstract BaseChar(Entity) to Entity {
 	
 	public function new(id:Entity) {
 		this = id;
-		Command.queue(RenderCommand.ALLOC_SPRITE(this, MAIN)); // this is the only compo that doesn't really need to be configured
+		Command.queue(ALLOC_SPRITE(this, MAIN)); // this is the only compo that doesn't really need to be configured
 	}
 }

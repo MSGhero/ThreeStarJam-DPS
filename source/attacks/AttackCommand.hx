@@ -8,5 +8,5 @@ enum AttackCommand {
 	CLICK(char:Entity);
 	UNLOCK(char:Entity, level:AttackLevel);
 	DEBUFF(caster:Entity, debuff:BaseDebuff);
-	LOG(caster:Entity, damage:Int);
+	LOG(caster:Entity, damage:Int, crit:Bool);
 }

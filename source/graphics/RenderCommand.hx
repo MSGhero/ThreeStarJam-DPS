@@ -12,4 +12,5 @@ enum RenderCommand {
 	ADD_SHEET(sheet:Spritesheet, id:SpritesheetID);
 	CREATE_BATCH(sheet:SpritesheetID, tag:BatchID, parentTag:ParentID, layer:LayerID);
 	ALLOC_SPRITE(entity:Entity, from:BatchID);
+	VISIBILITY(entity:Entity, visible:Bool);
 }

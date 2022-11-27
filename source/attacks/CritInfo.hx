@@ -6,8 +6,8 @@ import timing.Updater;
 
 class CritInfo {
 	
-	var chance:Float;
-	var mult:Float;
+	public var chance:Float;
+	public var mult:Float;
 	public var updater(default, null):Updater;
 	
 	public function new(chance:Float, mult:Float) {
@@ -16,21 +16,19 @@ class CritInfo {
 		this.mult = mult;
 		
 		updater = new Updater();
-		updater.duration = 5;
-		updater.repetitions = 1;
 		updater.autoDispose = false;
 		updater.paused = true;
 	}
 	
 	public function start() {
-		updater.duration = 5;
+		updater.duration = 3;
 		updater.repetitions = 1;
 		updater.paused = false;
 		updater.resetCounter();
 	}
 	
-	public function getMultiplier() {
-		if (updater.isActive && Math.random() <= chance) return mult;
-		else return 1.0;
+	public function getChance() {
+		if (updater.isActive) return chance;
+		else return 0;
 	}
 }

@@ -7,6 +7,8 @@ import ecs.Entity;
 import command.Command;
 import ecs.Universe;
 import ecs.System;
+import graphics.DisplayListCommand;
+import graphics.RenderCommand;
 
 class RenderSystem extends System {
 	
@@ -35,12 +37,14 @@ class RenderSystem extends System {
 	override function onEnabled() {
 		super.onEnabled();
 		
-		Command.register(RenderCommand.ADD_SHEET(null, MAIN), handleRC);
-		Command.register(RenderCommand.CREATE_BATCH(MAIN, MAIN, S2D, DEFAULT), handleRC);
-		Command.register(RenderCommand.ALLOC_SPRITE(Entity.none, MAIN), handleRC);
+		Command.register(ADD_SHEET(null, MAIN), handleRC);
+		Command.register(CREATE_BATCH(MAIN, MAIN, S2D, DEFAULT), handleRC);
+		Command.register(ALLOC_SPRITE(Entity.none, MAIN), handleRC);
+		Command.register(VISIBILITY(Entity.none, false), handleRC);
 		
-		Command.register(DisplayListCommand.ADD_PARENT(null, S2D), handleDLC);
-		Command.register(DisplayListCommand.ADD_TO(null, S2D, DEFAULT), handleDLC);
+		Command.register(ADD_PARENT(null, S2D), handleDLC);
+		Command.register(ADD_TO(null, S2D, DEFAULT), handleDLC);
+		Command.register(REMOVE_FROM_PARENT(null), handleDLC);
 	}
 	
 	function handleRC(rc:RenderCommand) {
@@ -51,10 +55,12 @@ class RenderSystem extends System {
 			case CREATE_BATCH(sheet, tag, parentTag, layer):
 				var batch = new SpriteBatch(sheetMap.get(sheet).get("default"));
 				batchMap.set(tag, batch);
-				Command.queue(DisplayListCommand.ADD_TO(batch, parentTag, layer));
+				Command.queue(ADD_TO(batch, parentTag, layer));
 			case ALLOC_SPRITE(entity, from):
 				var elt = batchMap.get(from).alloc(null); // the animation will set the tile properly
 				universe.setComponents(entity, (elt:Sprite));
+			case VISIBILITY(entity, visible):
+				fetch(sprites, entity, { sprite.visible = visible; });
 			default:
 		}
 	}
@@ -66,6 +72,8 @@ class RenderSystem extends System {
 				parentMap.set(tag, parent);
 			case ADD_TO(child, parent, layer):
 				parentMap.get(parent).addChildAt(child, layer);
+			case REMOVE_FROM_PARENT(child):
+				child.remove();
 			default:
 		}
 	}

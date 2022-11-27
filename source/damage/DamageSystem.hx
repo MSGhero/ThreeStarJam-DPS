@@ -1,6 +1,8 @@
 package damage;
 
-import hl.Ref;
+import attacks.CritInfo;
+import graphics.Sprite;
+import timing.Tweener;
 import timing.TimingCommand;
 import timing.Updater;
 import graphics.DisplayListCommand;
@@ -23,7 +25,19 @@ class DamageSystem extends System {
 			hype:Hype
 		},
 		requires : {
-			char:Character
+			char:Character,
+			color:Int,
+			critInfo:CritInfo
+		}
+	};
+	
+	@:fullFamily
+	var sprites : {
+		resources : {
+			critUIs:Array<CritUI>
+		},
+		requires : {
+			sprite:Sprite
 		}
 	};
 	
@@ -49,14 +63,27 @@ class DamageSystem extends System {
 	override function onEnabled() {
 		super.onEnabled();
 		
-		Command.register(AttackCommand.LOG(Entity.none, 0), handleAtkC);
-		Command.register(DisplayListCommand.PARENTS_SET_UP, handleDLC);
+		Command.register(LOG(Entity.none, 0, false), handleAtkC);
+		Command.register(CLICK(Entity.none), handleAtkC);
+		Command.register(PARENTS_SET_UP, handleDLC);
 	}
 	
 	function handleAtkC(atkc:AttackCommand) {
 		
 		switch (atkc) {
-			case LOG(caster, amount):
+			case CLICK(chara):
+				setup(sprites, {
+					fetch(characters, chara, {
+						var ent = critUIs[char];
+						
+						fetch(sprites, ent, {
+							sprite.visible = true;
+							critInfo.updater.onComplete = () -> sprite.visible = false;
+						});
+					});
+				});
+				
+			case LOG(caster, amount, crit):
 				
 				setup(characters, {
 					fetch(characters, caster, {
@@ -69,9 +96,11 @@ class DamageSystem extends System {
 						
 						rollingAvg.push(di);
 						longAvg.push(di);
-						hype.value += amount / 20;
+						hype.value += amount / 10;
 					});
 				});
+				
+				showDamage(caster, amount, crit);
 				
 			default:
 		}
@@ -92,8 +121,8 @@ class DamageSystem extends System {
 				up.callback = updateUI;
 				
 				Command.queueMany(
-					DisplayListCommand.ADD_TO(text, S2D, DEFAULT),
-					TimingCommand.ADD_UPDATER(universe.createEntity(), up)
+					ADD_TO(text, S2D, DEFAULT),
+					ADD_UPDATER(universe.createEntity(), up)
 				);
 				
 			default:
@@ -145,6 +174,44 @@ class DamageSystem extends System {
 		final zeroes = Math.pow(10, decimals);
 		final temp = Math.floor(dps * zeroes);
 		return temp / zeroes;
+	}
+	
+	function showDamage(caster:Entity, damage:Int, crit:Bool) {
+		
+		var ent = universe.createEntity();
+		
+		var text = new Text(DefaultFont.get());
+		text.x = Math.random() * 100 + 100; // find #s
+		text.y = 200;
+		text.textAlign = Center;
+		text.text = Std.string(damage);
+		
+		if (crit) {
+			fetch(characters, caster, {
+				text.textColor = color;
+			});
+		}
+		
+		else {
+			text.textColor = 0xffffffff;
+		}
+		
+		var tw = new Tweener(f -> {
+			text.alpha = 1 - f * f;
+			text.y = 200 - 75 * f;
+		});
+		
+		tw.duration = 2;
+		tw.repetitions = 1;
+		tw.onComplete = () -> {
+			Command.queue(REMOVE_FROM_PARENT(text)); // hope this doesn't cause memory leaks lol. better to tie to entity eventually
+			universe.deleteEntity(ent);
+		};
+		
+		Command.queueMany(
+			ADD_TO(text, S2D, DEFAULT),
+			ADD_UPDATER(ent, tw)
+		);
 	}
 }
 

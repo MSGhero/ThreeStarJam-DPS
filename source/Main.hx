@@ -1,5 +1,7 @@
 package;
 
+import damage.CritUI;
+import hxd.res.DefaultFont;
 import damage.Hype;
 import characters.Mage;
 import input.KeyboardInput;
@@ -58,7 +60,7 @@ class Main extends App {
 		engine.backgroundColor = 0xff888888;
 		
 		ecs = Universe.create({
-			entities : 200,
+			entities : 400,
 			phases : [
 				{
 					name : "update",
@@ -106,10 +108,10 @@ class Main extends App {
 		sheet.loadTexturePackerData(Res.images.sheet, Res.data.sheet.entry.getText(), "default");
 		
 		Command.queueMany(
-			DisplayListCommand.ADD_PARENT(s2d, S2D),
-			RenderCommand.ADD_SHEET(sheet, MAIN),
-			RenderCommand.CREATE_BATCH(MAIN, MAIN, S2D, S2D_GAME),
-			DisplayListCommand.PARENTS_SET_UP
+			ADD_PARENT(s2d, S2D),
+			ADD_SHEET(sheet, MAIN),
+			CREATE_BATCH(MAIN, MAIN, S2D, S2D_GAME),
+			PARENTS_SET_UP
 		);
 		
 		var warrior = new Warrior(ecs, sheet);
@@ -123,7 +125,18 @@ class Main extends App {
 		mmap[Action.SELECT] = [Key.MOUSE_LEFT, Key.MOUSE_RIGHT];
 		input.addDevice(new MouseInput(mmap));
 		
-		Command.queue(InputCommand.ADD_INPUT(input, P1));
+		DefaultFont.get().resizeTo(24);
+		
+		var crits = ["axe_crit", "staff_crit", "spear_crit", "bow_crit"].map(s -> new CritUI(s, ecs, sheet));
+		ecs.setResources(crits);
+		
+		Command.queueMany(
+			ADD_INPUT(input, P1),
+			VISIBILITY(crits[0], false),
+			VISIBILITY(crits[1], false),
+			VISIBILITY(crits[2], false),
+			VISIBILITY(crits[3], false)
+		);
 	}
 	
 	override function mainLoop() {

@@ -4,6 +4,7 @@ import timing.TimingCommand;
 import ecs.Entity;
 import command.Command;
 import timing.Updater;
+import attacks.AttackCommand;
 
 class BaseAttack {
 	
@@ -29,7 +30,7 @@ class BaseAttack {
 		updater.paused = true;
 		updater.callback = apply;
 		updater.autoDispose = false; // these will persist, so don't trash them when complete
-		Command.queue(TimingCommand.ADD_UPDATER(caster, updater));
+		Command.queue(ADD_UPDATER(caster, updater));
 		
 		this.caster = caster;
 		this.debuff = debuff;
@@ -61,6 +62,6 @@ class BaseAttack {
 	}
 	
 	function apply() {
-		if (debuff != null) Command.queue(AttackCommand.DEBUFF(caster, debuff)); 
+		if (debuff != null) Command.queue(DEBUFF(caster, debuff)); 
 	}
 }

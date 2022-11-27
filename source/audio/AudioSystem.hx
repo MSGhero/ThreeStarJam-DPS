@@ -4,12 +4,12 @@ import hxd.Res;
 import hxd.snd.SoundGroup;
 import command.Command;
 import haxe.ds.StringMap;
-import hxd.snd.ChannelGroup;
 import ecs.Universe;
 import ecs.System;
 import hxd.snd.Manager;
 import hxd.snd.Channel;
 import input.Input;
+import audio.AudioCommand;
 
 class AudioSystem extends System {
 	
@@ -65,10 +65,10 @@ class AudioSystem extends System {
 	override function onEnabled() {
 		super.onEnabled();
 		
-		Command.register(AudioCommand.PLAY(MUSIC, "", false, 0, ""), handleAC);
-		Command.register(AudioCommand.STOP_BY_TYPE(MUSIC), handleAC);
-		Command.register(AudioCommand.STOP_BY_TAG(""), handleAC);
-		Command.register(AudioCommand.RESET_VOLUME, handleAC);
+		Command.register(PLAY(MUSIC, "", false, 0, ""), handleAC);
+		Command.register(STOP_BY_TYPE(MUSIC), handleAC);
+		Command.register(STOP_BY_TAG(""), handleAC);
+		Command.register(RESET_VOLUME, handleAC);
 	}
 	
 	function handleAC(ac:AudioCommand) {
