@@ -21,6 +21,9 @@ class Animation {
 	public var paused(get, never):Bool;
 	inline function get_paused() { return updater.paused; }
 	
+	public var isActive(get, never):Bool;
+	inline function get_isActive() { return updater.isActive; }
+	
 	public var name(get, never):String;
 	inline function get_name() { return currAnim.name; }
 	
@@ -34,6 +37,7 @@ class Animation {
 		
 		updater = new Updater();
 		updater.callback = advance;
+		updater.autoDispose = false;
 		
 		anims = new StringMap();
 		currAnim = null;

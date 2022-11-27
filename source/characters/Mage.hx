@@ -27,9 +27,9 @@ abstract Mage(BaseChar) to BaseChar {
 		var anim = new Animation();
 		anim.add({
 			name : "attack",
-			loop : true,
-			fps : 3,
-			frames : sheet.map(["staff_idle", "staff_ready", "staff_cast", "staff_cast"]) // this isn't great, need ref to spritesheet here which I'm trying to avoid
+			loop : false,
+			fps : 12,
+			frames : sheet.map(["staff_idle", "staff_ready", "staff_cast", "staff_cast", "staff_idle"]) // this isn't great, need ref to spritesheet here which I'm trying to avoid
 		})
 		.add({
 			name : "idle",
@@ -40,11 +40,11 @@ abstract Mage(BaseChar) to BaseChar {
 		anim.play("idle");
 		
 		var attacks = new Vector<BaseAttack>(AttackLevel.ULT + 1);
-		attacks[AttackLevel.BASIC] = new Click(this, 1);
-		attacks[AttackLevel.AUTO] = new AutoDamage(this, 1, 0.5);
-		attacks[AttackLevel.DOT] = new DoTCast(this, 1, 3, 1, 10);
-		attacks[AttackLevel.ADV] = new AutoDamage(this, 5, 10);
-		attacks[AttackLevel.ULT] = new AutoDamage(this, 50, 60);
+		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 1);
+		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 1, 0.5);
+		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 1, 3, 1, 10);
+		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 5, 10);
+		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 50, 60);
 		
 		var debuffs:Array<BaseDebuff> = [];
 		

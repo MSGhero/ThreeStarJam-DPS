@@ -1,5 +1,6 @@
 package attacks;
 
+import graphics.Animation;
 import ecs.Entity;
 import attacks.base.BaseDebuff;
 import attacks.base.BaseAttack;
@@ -18,9 +19,17 @@ class AttackSystem extends System {
 		critInfo:CritInfo
 	};
 	
+	@:fastFamily
+	var anims : {
+		anim:Animation
+	}
+	
+	var animPrio:Array<String>;
+	
 	public function new(ecs:Universe) {
 		super(ecs);
 		
+		animPrio = ["attack", "attack", "dot", "adv", "ult"];
 	}
 	
 	override function onEnabled() {
@@ -35,10 +44,18 @@ class AttackSystem extends System {
 		
 		switch (atkc) {
 			case CLICK(char):
+				
 				fetch(attackInfos, char, {
 					attacks[0].oneTime();
 					critInfo.start();
 				});
+				
+				fetch(anims, char, {
+					if (!anim.isActive) { // can't override anything, so no need to check for higher prio anims
+						anim.play("attack");
+					}
+				});
+				
 			case UNLOCK(char, level):
 				fetch(attackInfos, char, {
 					attacks[level].enable();
@@ -61,8 +78,15 @@ class AttackSystem extends System {
 						Command.queue(LOG(caster, total, crit));
 						
 					case ATTACK(ba):
+						
 						ba.refreshReps();
 						ba.enable();
+						
+						fetch(anims, caster, {
+							if (!anim.isActive || (ba.level:Int) > animPrio.indexOf(anim.name)) {
+								anim.play(animPrio[ba.level]); // diff anims for diff attacks?
+							}
+						});
 				}
 			default:
 		}

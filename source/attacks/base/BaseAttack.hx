@@ -18,13 +18,14 @@ class BaseAttack {
 	**/
 	
 	public var debuff(default, null):BaseDebuff = null;
+	public var level(default, null):AttackLevel;
 	
 	public var updater(default, null):Updater;
 	
 	var caster:Entity;
 	var savedReps:Int;
 	
-	public function new(caster:Entity, ?debuff:BaseDebuff) {
+	public function new(caster:Entity, level:AttackLevel, ?debuff:BaseDebuff) {
 		
 		updater = new Updater();
 		updater.paused = true;
@@ -33,6 +34,7 @@ class BaseAttack {
 		Command.queue(ADD_UPDATER(caster, updater));
 		
 		this.caster = caster;
+		this.level = level;
 		this.debuff = debuff;
 		
 		savedReps = -1;
