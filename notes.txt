@@ -1,0 +1,74 @@
+ThreeStarJam
+Optional theme: woman
+11/26-11/28
+
+Idle clicker: damage per second
+Click to attack, or spacebar ig
+One infinite boss or spawn new mobs?
+	Inf easier, don't actually need hp in that case
+
+Second button for upgrades
+	Auto attack
+	DoT (one attack per X time, with N ticks of damage) (dmg+, rate+)
+	Additional people?
+	Damage+
+	Auto attack speed+
+	Dispel accrual
+	Occasional high damage spell (dmg+, rate+)
+	Critical hit (chance+, damage+)
+What currency are you spending?
+	Damage
+	$ from some conversion factor of saving people
+	Energy
+	Maybe spellpower (mp?)
+	Hype from doing so much dmg
+Boss attacks
+	It's an idle game so nothing hurting you
+	Auto attack speed-
+	Damage-
+	Dispel DoT (no, kinda pointless)
+	Cancel critical hit chance
+		Do player debuffs expire after some time?
+			I think so, but they last for like 15-30 sec or something really annoying
+	Mmmmmm negative effects on player requires thinking, which i don't have time for
+Need a reason to keep clicking
+	Multiplier to hype accrual in addition to ++
+	Boost to ++
+	Increases crit chance, from 0 for not clicking to X%
+
+Track damage over time (per 30 sec? show all damage instances?)
+Track dps over time (per 30 sec?)
+
+Preloader "click to load faster" button same as "attack" button
+
+Enemy needs to know
+	Current buffs
+	Current debuffs
+	Current DoTs (could be debuff)
+	Dispel counter (no)
+	Animation, sprite
+	Previous "grunt sfx" from being hit
+
+Heroes need to know
+	Current buffs
+	Current debuffs
+	Animation, sprite
+	Attack speed
+	Damage
+	Critical hit chance,damage+
+		Maybe crit is an updater with random duration, provides "will crit" buff for next (auto) attack
+	DoT updater
+		Just goes off, maybe with a diff animation
+	Auto attack updater
+		Just goes off
+	Big hit updater
+		Just goes off, maybe with some summoning effect
+
+In case of extra time
+	NG high score?
+	NG username integration
+	NG prof pic integration?
+		Maybe default pfp if not logged in and your own if logged in
+		Maybe animation is just the attack, and maybe some shifting of player sprite
+	Enemy comes from followers or something?
+	Allies come from followers?

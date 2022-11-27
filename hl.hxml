@@ -1,0 +1,14 @@
+-cp source
+-D resourcesPath=assets
+
+-D windowSize=960x540
+
+-D ecs.no_debug_output
+
+-lib heaps
+-lib hlsdl
+-lib ecs
+
+-hl export/hl/ThreeStarJam.hl
+-main Main
+-debug

@@ -1,0 +1,13 @@
+-cp source
+-D resourcesPath=assets
+
+-D windowSize=960x540
+
+-D ecs.no_debug_output
+
+-lib heaps
+-lib ecs
+
+-js export/js/ThreeStarJam.js
+-main Main
+-debug

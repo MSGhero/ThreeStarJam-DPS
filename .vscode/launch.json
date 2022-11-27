@@ -1,0 +1,33 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "HashLink",
+			"request": "launch",
+			"type": "hl",
+			"cwd": "${workspaceFolder}",
+			"internalConsoleOptions": "openOnSessionStart",
+			"preLaunchTask": {
+			    	"type": "haxe",
+			    	"args": "active configuration"
+			}
+		},
+		{
+			"name": "Launch Edge against localhost",
+			"request": "launch",
+			"type": "edge",
+			"url": "file://${workspaceFolder}/export/js/index.html",
+			"webRoot": "${workspaceFolder}",
+			"preLaunchTask": {
+				"type" : "haxe",
+				"args" : "active configuration"
+			}
+		},
+		{
+			"name": "Haxe Interpreter",
+			"request": "launch",
+			"type": "haxe-eval",
+			"preLaunchTask": "launch task here",
+		}
+	]
+}
