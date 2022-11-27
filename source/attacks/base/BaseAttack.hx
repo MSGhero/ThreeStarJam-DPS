@@ -16,7 +16,6 @@ class BaseAttack {
 		The DoT cast itself is one attack on a certain timer, and the ticks are a debuff that applies another attack with limited repetitions
 	**/
 	
-	public var buff(default, null):BaseBuff = null;
 	public var debuff(default, null):BaseDebuff = null;
 	
 	public var updater(default, null):Updater;
@@ -24,7 +23,7 @@ class BaseAttack {
 	var caster:Entity;
 	var savedReps:Int;
 	
-	public function new(caster:Entity, ?buff:BaseBuff, ?debuff:BaseDebuff) {
+	public function new(caster:Entity, ?debuff:BaseDebuff) {
 		
 		updater = new Updater();
 		updater.paused = true;
@@ -33,7 +32,6 @@ class BaseAttack {
 		Command.queue(TimingCommand.ADD_UPDATER(caster, updater));
 		
 		this.caster = caster;
-		this.buff = buff;
 		this.debuff = debuff;
 		
 		savedReps = -1;
@@ -63,7 +61,6 @@ class BaseAttack {
 	}
 	
 	function apply() {
-		if (buff != null) Command.queue(AttackCommand.BUFF(caster, buff));
 		if (debuff != null) Command.queue(AttackCommand.DEBUFF(caster, debuff)); 
 	}
 }

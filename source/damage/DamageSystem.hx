@@ -1,5 +1,6 @@
 package damage;
 
+import hl.Ref;
 import timing.TimingCommand;
 import timing.Updater;
 import graphics.DisplayListCommand;
@@ -16,26 +17,21 @@ import ecs.System;
 
 class DamageSystem extends System {
 	
-	@:fastFamily
+	@:fullFamily
 	var characters : {
-		char:Character
+		resources : {
+			hype:Hype
+		},
+		requires : {
+			char:Character
+		}
 	};
 	
-	// dps will be rolling average of 1 sec
-	// track max damage
-	// dps per or dps total? both
-	// dps total prominently, dps per below char
-	
-	// record damage dealt at the end of each minute, per
-	
-	// data struct time
-	
-	// i don't think it makes too much sense putting any of this in ECS form
-	// i also really don't want the entity count to have a chance of exploding when i could just use an array
-	
 	var rollingAvg:Array<DmgInstance>; // linked list prolly better here, but w/e
-	var dps:Vector<Int>;
-	var overallDPS:Int;
+	var longAvg:Array<DmgInstance>;
+	var dps:Vector<Float>;
+	var longDPS:Vector<Float>;
+	var longTime:Float = 30; // seconds of averaging
 	
 	var text:Text;
 	
@@ -43,32 +39,38 @@ class DamageSystem extends System {
 		super(ecs);
 		
 		rollingAvg = [];
+		longAvg = [];
+		
 		dps = new Vector(4);
-		for (i in 0...dps.length) dps[i] = 0;
-		overallDPS = 0;
+		longDPS = new Vector(4);
+		for (i in 0...dps.length) dps[i] = longDPS[i] = 0;
 	}
 	
 	override function onEnabled() {
 		super.onEnabled();
 		
-		Command.register(AttackCommand.DEBUFF(Entity.none, null), handleAtkC);
+		Command.register(AttackCommand.LOG(Entity.none, 0), handleAtkC);
 		Command.register(DisplayListCommand.PARENTS_SET_UP, handleDLC);
 	}
 	
 	function handleAtkC(atkc:AttackCommand) {
 		
 		switch (atkc) {
-			case DEBUFF(caster, DMG(amount)):
+			case LOG(caster, amount):
 				
-				fetch(characters, caster, {
-					
-					var di:DmgInstance = {
-						time : Timer.stamp(),
-						damage : amount,
-						caster : char
-					};
-					
-					rollingAvg.push(di);
+				setup(characters, {
+					fetch(characters, caster, {
+						
+						var di:DmgInstance = {
+							time : Timer.stamp(),
+							damage : amount,
+							caster : char
+						};
+						
+						rollingAvg.push(di);
+						longAvg.push(di);
+						hype.value += amount / 20;
+					});
 				});
 				
 			default:
@@ -100,27 +102,49 @@ class DamageSystem extends System {
 	
 	function updateUI() {
 		
-		for (i in 0...dps.length) dps[i] = 0;
+		setup(characters, {
+			
+			final t = Timer.stamp();
+			final h = hype.value;
+			
+			final overallDPS = setUpDPS(rollingAvg, dps, 1, t);
+			final longTermDPS = setUpDPS(longAvg, longDPS, longTime, t);
+			
+			if (text != null) {
+				text.text = 'Total DPS ($longTime sec): ${formatDPS(overallDPS, 0)} (${formatDPS(longTermDPS, 1)})' +
+					'\nWarrior DPS: ${formatDPS(dps[0], 0)} (${formatDPS(longDPS[0], 1)})' +
+					'\nMage DPS: ${formatDPS(dps[1], 0)} (${formatDPS(longDPS[1], 1)})' +
+					'\n\nHype: ${formatDPS(h, h < 10 ? 2 : h < 100 ? 1 : 0)}' // show decimals of hype only when relevant
+				;
+			}
+		});
+	}
+	
+	function setUpDPS(dmgList:Array<DmgInstance>, dpsList:Vector<Float>, duration:Float, time:Float) {
 		
-		if (rollingAvg.length > 0) {
+		for (i in 0...dpsList.length) dpsList[i] = 0;
+		
+		if (dmgList.length > 0) {
 			
-			var t = Timer.stamp();
-			
-			while (rollingAvg.length > 0 && t - rollingAvg[0].time > 1) {
-				rollingAvg.shift();
+			while (dmgList.length > 0 && time - dmgList[0].time > duration) {
+				dmgList.shift();
 			}
 			
-			for (di in rollingAvg) {
-				dps[di.caster] += di.damage;
+			for (di in dmgList) {
+				dpsList[di.caster] += di.damage / duration;
 			}
 		}
 		
-		overallDPS = 0;
-		for (i in 0...dps.length) overallDPS += dps[i];
+		var overallDPS = 0.0;
+		for (i in 0...dpsList.length) overallDPS += dpsList[i];
 		
-		if (text != null) {
-			text.text = 'Total DPS: $overallDPS\nWarrior DPS: ${dps[0]}\nMage DPS: ${dps[1]}';
-		}
+		return overallDPS;
+	}
+	
+	function formatDPS(dps:Float, decimals:Int) {
+		final zeroes = Math.pow(10, decimals);
+		final temp = Math.floor(dps * zeroes);
+		return temp / zeroes;
 	}
 }
 

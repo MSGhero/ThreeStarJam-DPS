@@ -1,5 +1,7 @@
 package characters;
 
+import timing.TimingCommand;
+import attacks.CritInfo;
 import interactive.shapes.Circle;
 import interactive.Interactive;
 import attacks.Click;
@@ -8,7 +10,6 @@ import command.Command;
 import attacks.DoTCast;
 import attacks.AutoDamage;
 import attacks.base.BaseDebuff;
-import attacks.base.BaseBuff;
 import attacks.AttackLevel;
 import attacks.base.BaseAttack;
 import haxe.ds.Vector;
@@ -45,7 +46,6 @@ abstract Mage(BaseChar) to BaseChar {
 		attacks[AttackLevel.ADV] = new AutoDamage(this, 5, 10);
 		attacks[AttackLevel.ULT] = new AutoDamage(this, 50, 60);
 		
-		var buffs:Array<BaseBuff> = [];
 		var debuffs:Array<BaseDebuff> = [];
 		
 		var int:Interactive = {
@@ -53,10 +53,15 @@ abstract Mage(BaseChar) to BaseChar {
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),
-			onSelect: () -> attacks[0].oneTime(),
+			onSelect: () -> Command.queue(AttackCommand.CLICK(this))
 		};
 		
-		ecs.setComponents(this, anim, attacks, buffs, debuffs, int, Character.MAGE); // sprite already created
-		Command.queue(AttackCommand.UNLOCK(this, BASIC));
+		var critInfo = new CritInfo(0.25, 2);
+		
+		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, Character.MAGE); // sprite already created
+		Command.queueMany(
+			AttackCommand.UNLOCK(this, BASIC),
+			TimingCommand.ADD_UPDATER(this, critInfo.updater)
+		);
 	}
 }

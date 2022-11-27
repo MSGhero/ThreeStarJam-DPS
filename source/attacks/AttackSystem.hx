@@ -1,7 +1,6 @@
 package attacks;
 
 import ecs.Entity;
-import attacks.base.BaseBuff;
 import attacks.base.BaseDebuff;
 import attacks.base.BaseAttack;
 import command.Command;
@@ -14,8 +13,8 @@ class AttackSystem extends System {
 	@:fastFamily
 	var attackInfos : {
 		attacks:Vector<BaseAttack>,
-		buffs:Array<BaseBuff>,
-		debuffs:Array<BaseDebuff>
+		debuffs:Array<BaseDebuff>,
+		critInfo:CritInfo
 	};
 	
 	public function new(ecs:Universe) {
@@ -26,8 +25,8 @@ class AttackSystem extends System {
 	override function onEnabled() {
 		super.onEnabled();
 		
+		Command.register(AttackCommand.CLICK(Entity.none), handleAtkC);
 		Command.register(AttackCommand.UNLOCK(Entity.none, 0), handleAtkC);
-		Command.register(AttackCommand.BUFF(Entity.none, null), handleAtkC); // params in the enum don't matter
 		Command.register(AttackCommand.DEBUFF(Entity.none, null), handleAtkC);
 	}
 	
@@ -37,26 +36,28 @@ class AttackSystem extends System {
 			case CLICK(char):
 				fetch(attackInfos, char, {
 					attacks[0].oneTime();
+					critInfo.start();
 				});
 			case UNLOCK(char, level):
 				fetch(attackInfos, char, {
 					attacks[level].enable();
 				});
-			case BUFF(caster, buff):
-				switch (buff) {
-					case CRIT:
-						fetch(attackInfos, caster, {
-							buffs.push(buff);
-						});
-				}
 			case DEBUFF(caster, debuff):
 				switch (debuff) {
 					case DMG(amount):
-						// this will get handled in dmgsys which deals w tracking over time
+						
+						var total = amount;
+						fetch(attackInfos, caster, {
+							total = Std.int(total * critInfo.getMultiplier());
+						});
+						
+						Command.queue(AttackCommand.LOG(caster, total));
+						
 					case ATTACK(ba):
 						ba.refreshReps();
 						ba.enable();
 				}
+			default:
 		}
 	}
 }

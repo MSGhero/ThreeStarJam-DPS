@@ -173,6 +173,7 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">images/archer/bow_crit.png</key>
             <key type="filename">images/archer/bow_hold.png</key>
             <key type="filename">images/archer/bow_idle.png</key>
             <key type="filename">images/archer/bow_release.png</key>
@@ -182,12 +183,15 @@
             <key type="filename">images/boss/shield_defend_soft_solo.png</key>
             <key type="filename">images/boss/shield_idle.png</key>
             <key type="filename">images/boss/shield_idle_solo.png</key>
+            <key type="filename">images/dragoon/spear_crit.png</key>
             <key type="filename">images/dragoon/spear_idle.png</key>
             <key type="filename">images/dragoon/spear_pre.png</key>
             <key type="filename">images/dragoon/spear_thrust.png</key>
             <key type="filename">images/mage/staff_cast.png</key>
+            <key type="filename">images/mage/staff_crit.png</key>
             <key type="filename">images/mage/staff_idle.png</key>
             <key type="filename">images/mage/staff_ready.png</key>
+            <key type="filename">images/warrior/axe_crit.png</key>
             <key type="filename">images/warrior/axe_idle.png</key>
             <key type="filename">images/warrior/axe_swing.png</key>
             <key type="filename">images/warrior/axe_windup.png</key>

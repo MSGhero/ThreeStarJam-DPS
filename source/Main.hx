@@ -1,5 +1,6 @@
 package;
 
+import damage.Hype;
 import characters.Mage;
 import input.KeyboardInput;
 import characters.Warrior;
@@ -77,7 +78,12 @@ class Main extends App {
 			]
 		});
 		
-		ecs.setResources(([]:Array<Command>)); // command queue needs to be added before enabling everyone
+		var hype = 0.0;
+		
+		ecs.setResources(
+			([]:Array<Command>), // command queue needs to be added before enabling everyone
+			new Hype() // hype meter
+		);
 		
 		updatePhase = ecs.getPhase("update");
 		// this requires some mods to the ECS lib that won't get approved for merge. i need to work on a better solution still
