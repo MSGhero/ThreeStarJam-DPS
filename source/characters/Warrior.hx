@@ -73,7 +73,7 @@ abstract Warrior(BaseChar) to BaseChar {
 		var critInfo = new CritInfo(0.25, 2);
 		
 		var int:Interactive = {
-			shape : new Circle(464, 463, 92),
+			shape : new Circle(464 - 22, 463 - 22, 60),
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),

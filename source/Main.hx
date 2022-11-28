@@ -3,7 +3,6 @@ package;
 import characters.Dragoon;
 import characters.Archer;
 import damage.CritUI;
-import hxd.res.DefaultFont;
 import damage.Hype;
 import characters.Mage;
 import input.KeyboardInput;
@@ -34,6 +33,7 @@ import input.MouseSystem;
 import interactive.InteractiveSystem;
 import attacks.AttackSystem;
 import damage.DamageSystem;
+import damage.UpgradeSystem;
 import timing.Updater;
 
 class Main extends App {
@@ -72,6 +72,7 @@ class Main extends App {
 						MouseSystem,
 						AttackSystem,
 						DamageSystem,
+						UpgradeSystem,
 						RenderSystem,
 						AnimSystem,
 						TimingSystem,
@@ -116,10 +117,11 @@ class Main extends App {
 			PARENTS_SET_UP
 		);
 		
-		var warrior = new Warrior(ecs, sheet);
-		var mage = new Mage(ecs, sheet);
-		var archer = new Archer(ecs, sheet);
-		var dragoon = new Dragoon(ecs, sheet);
+		// characters add themselves to the screen and appropriate families
+		new Warrior(ecs, sheet);
+		new Mage(ecs, sheet);
+		new Archer(ecs, sheet);
+		new Dragoon(ecs, sheet);
 		
 		var input = new Input();
 		var kmap = new InputMapping();
@@ -129,10 +131,8 @@ class Main extends App {
 		mmap[Action.SELECT] = [Key.MOUSE_LEFT, Key.MOUSE_RIGHT];
 		input.addDevice(new MouseInput(mmap));
 		
-		DefaultFont.get().resizeTo(24);
-		
 		var crits = ["axe_crit", "staff_crit", "spear_crit", "bow_crit"].map(s -> new CritUI(s, ecs, sheet));
-		ecs.setResources(crits);
+		ecs.setResources(crits, sheet);
 		
 		Command.queueMany(
 			ADD_INPUT(input, P1),

@@ -69,7 +69,7 @@ abstract Dragoon(BaseChar) to BaseChar {
 		var debuffs:Array<BaseDebuff> = [];
 		
 		var int:Interactive = {
-			shape : new Circle(537, 231, 92),
+			shape : new Circle(537 - 22, 231 - 22, 60),
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),
@@ -81,7 +81,6 @@ abstract Dragoon(BaseChar) to BaseChar {
 		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xff9179ff, Character.DRAGOON); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
-			UNLOCK(this, ULT),
 			ADD_UPDATER(this, critInfo.updater)
 		);
 	}

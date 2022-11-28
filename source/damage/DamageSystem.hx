@@ -1,5 +1,6 @@
 package damage;
 
+import h2d.Font;
 import attacks.CritInfo;
 import graphics.Sprite;
 import timing.Tweener;
@@ -47,6 +48,7 @@ class DamageSystem extends System {
 	var longDPS:Vector<Float>;
 	var longTime:Float = 30; // seconds of averaging
 	
+	var dmgFont:Font;
 	var text:Text;
 	
 	public function new(ecs:Universe) {
@@ -58,6 +60,9 @@ class DamageSystem extends System {
 		dps = new Vector(4);
 		longDPS = new Vector(4);
 		for (i in 0...dps.length) dps[i] = longDPS[i] = 0;
+		
+		dmgFont = DefaultFont.get().clone();
+		dmgFont.resizeTo(24);
 	}
 	
 	override function onEnabled() {
@@ -113,7 +118,7 @@ class DamageSystem extends System {
 				
 				text = new Text(DefaultFont.get());
 				text.textAlign = Left;
-				text.x = 0; text.y = 0;
+				text.x = 15; text.y = 15;
 				
 				var up = new Updater();
 				up.duration = 0.25;
@@ -143,6 +148,8 @@ class DamageSystem extends System {
 				text.text = 'Total DPS ($longTime sec): ${formatDPS(overallDPS, 0)} (${formatDPS(longTermDPS, 1)})' +
 					'\nWarrior DPS: ${formatDPS(dps[0], 0)} (${formatDPS(longDPS[0], 1)})' +
 					'\nMage DPS: ${formatDPS(dps[1], 0)} (${formatDPS(longDPS[1], 1)})' +
+					'\nDragoon DPS: ${formatDPS(dps[2], 0)} (${formatDPS(longDPS[2], 1)})' +
+					'\nArcher DPS: ${formatDPS(dps[3], 0)} (${formatDPS(longDPS[3], 1)})' +
 					'\n\nHype: ${formatDPS(h, h < 10 ? 2 : h < 100 ? 1 : 0)}' // show decimals of hype only when relevant
 				;
 			}
@@ -180,7 +187,7 @@ class DamageSystem extends System {
 		
 		var ent = universe.createEntity();
 		
-		var text = new Text(DefaultFont.get());
+		var text = new Text(dmgFont);
 		text.x = Math.random() * 100 + 100; // find #s
 		text.y = 200;
 		text.textAlign = Center;

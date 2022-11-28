@@ -69,7 +69,7 @@ abstract Archer(BaseChar) to BaseChar {
 		var debuffs:Array<BaseDebuff> = [];
 		
 		var int:Interactive = {
-			shape : new Circle(853, 137, 92),
+			shape : new Circle(853 - 22, 137 - 22, 60),
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),

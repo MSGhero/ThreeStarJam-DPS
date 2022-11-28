@@ -53,7 +53,7 @@ abstract Mage(BaseChar) to BaseChar {
 			name : "ult",
 			loop : false,
 			fps : 3,
-			frames : sheet.map(["staff_idle", "staff_ult0", "staff_ult0", "staff_ult1", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult1", "staff_ult0", "staff_idle"])
+			frames : sheet.map(["staff_idle", "staff_ult0", "staff_ult0", "staff_ult1", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult4", "staff_ult0", "staff_idle"])
 		})
 		;
 		
@@ -69,7 +69,7 @@ abstract Mage(BaseChar) to BaseChar {
 		var debuffs:Array<BaseDebuff> = [];
 		
 		var int:Interactive = {
-			shape : new Circle(769, 427, 92),
+			shape : new Circle(769 - 22, 427 - 22, 60),
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),
@@ -81,7 +81,6 @@ abstract Mage(BaseChar) to BaseChar {
 		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xffffb600, Character.MAGE); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
-			UNLOCK(this, ULT),
 			ADD_UPDATER(this, critInfo.updater)
 		);
 	}
