@@ -19,7 +19,7 @@ import ecs.Universe;
 import characters.BaseChar;
 
 @:transitive
-abstract Mage(BaseChar) to BaseChar {
+abstract Archer(BaseChar) to BaseChar {
 	
 	public function new(ecs:Universe, sheet:Spritesheet) {
 		this = new BaseChar(ecs.createEntity());
@@ -29,31 +29,31 @@ abstract Mage(BaseChar) to BaseChar {
 			name : "attack",
 			loop : false,
 			fps : 12,
-			frames : sheet.map(["staff_idle", "staff_ready", "staff_cast", "staff_cast", "staff_idle"]) // this isn't great, need ref to spritesheet here which I'm trying to avoid
+			frames : sheet.map(["bow_idle", "bow_hold", "bow_hold", "bow_release", "bow_idle"])
 		})
 		.add({
 			name : "idle",
 			loop : false,
 			fps : 1,
-			frames : sheet.map(["staff_idle"])
+			frames : sheet.map(["bow_idle"])
 		})
 		.add({
 			name : "dot",
 			loop : false,
 			fps : 12,
-			frames : sheet.map(["staff_idle", "staff_ready_dot", "staff_ready_dot", "staff_cast_dot", "staff_cast_dot", "staff_cast_dot", "staff_cast_dot", "staff_idle"])
+			frames : sheet.map(["bow_idle", "bow_hold_dot", "bow_hold_dot", "bow_hold_dot", "bow_hold_dot", "bow_release_dot", "bow_release_dot", "bow_idle"])
 		})
 		.add({
 			name : "adv",
 			loop : false,
 			fps : 6,
-			frames : sheet.map(["staff_idle", "staff_pre_adv", "staff_cast_adv", "staff_cast_adv", "staff_flash_adv", "staff_cast_adv", "staff_cast_adv", "staff_idle"])
+			frames : sheet.map(["bow_idle", "bow_pre_adv", "bow_cast_adv", "bow_cast_adv", "bow_flash_adv", "bow_cast_adv", "bow_cast_adv", "bow_idle"])
 		})
 		.add({
 			name : "ult",
 			loop : false,
-			fps : 3,
-			frames : sheet.map(["staff_idle", "staff_ult0", "staff_ult0", "staff_ult1", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult1", "staff_ult0", "staff_idle"])
+			fps : 6,
+			frames : sheet.map(["bow_idle", "bow_ult0", "bow_ult1", "bow_ult2", "bow_ult3", "bow_ult4", "bow_ult5", "bow_ult5", "bow_ult5", "bow_ult5", "bow_ult6", "bow_ult6", "bow_ult6", "bow_ult6", "bow_idle"])
 		})
 		;
 		
@@ -69,7 +69,7 @@ abstract Mage(BaseChar) to BaseChar {
 		var debuffs:Array<BaseDebuff> = [];
 		
 		var int:Interactive = {
-			shape : new Circle(769, 427, 92),
+			shape : new Circle(853, 137, 92),
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),
@@ -78,10 +78,9 @@ abstract Mage(BaseChar) to BaseChar {
 		
 		var critInfo = new CritInfo(0.25, 2);
 		
-		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xffffb600, Character.MAGE); // sprite already created
+		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xff37d98c, Character.ARCHER); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
-			UNLOCK(this, ULT),
 			ADD_UPDATER(this, critInfo.updater)
 		);
 	}

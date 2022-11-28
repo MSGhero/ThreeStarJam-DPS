@@ -1,5 +1,7 @@
 package;
 
+import characters.Dragoon;
+import characters.Archer;
 import damage.CritUI;
 import hxd.res.DefaultFont;
 import damage.Hype;
@@ -116,6 +118,8 @@ class Main extends App {
 		
 		var warrior = new Warrior(ecs, sheet);
 		var mage = new Mage(ecs, sheet);
+		var archer = new Archer(ecs, sheet);
+		var dragoon = new Dragoon(ecs, sheet);
 		
 		var input = new Input();
 		var kmap = new InputMapping();

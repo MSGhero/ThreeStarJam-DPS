@@ -19,7 +19,7 @@ import ecs.Universe;
 import characters.BaseChar;
 
 @:transitive
-abstract Mage(BaseChar) to BaseChar {
+abstract Dragoon(BaseChar) to BaseChar {
 	
 	public function new(ecs:Universe, sheet:Spritesheet) {
 		this = new BaseChar(ecs.createEntity());
@@ -29,31 +29,31 @@ abstract Mage(BaseChar) to BaseChar {
 			name : "attack",
 			loop : false,
 			fps : 12,
-			frames : sheet.map(["staff_idle", "staff_ready", "staff_cast", "staff_cast", "staff_idle"]) // this isn't great, need ref to spritesheet here which I'm trying to avoid
+			frames : sheet.map(["spear_idle", "spear_pre", "spear_thrust", "spear_thrust", "spear_idle"])
 		})
 		.add({
 			name : "idle",
 			loop : false,
 			fps : 1,
-			frames : sheet.map(["staff_idle"])
+			frames : sheet.map(["spear_idle"])
 		})
 		.add({
 			name : "dot",
 			loop : false,
 			fps : 12,
-			frames : sheet.map(["staff_idle", "staff_ready_dot", "staff_ready_dot", "staff_cast_dot", "staff_cast_dot", "staff_cast_dot", "staff_cast_dot", "staff_idle"])
+			frames : sheet.map(["spear_idle", "spear_pre_dot", "spear_pre_dot", "spear_thrust_dot", "spear_thrust_dot", "spear_thrust_dot", "spear_thrust_dot", "spear_idle"])
 		})
 		.add({
 			name : "adv",
 			loop : false,
 			fps : 6,
-			frames : sheet.map(["staff_idle", "staff_pre_adv", "staff_cast_adv", "staff_cast_adv", "staff_flash_adv", "staff_cast_adv", "staff_cast_adv", "staff_idle"])
+			frames : sheet.map(["spear_idle", "spear_pre_adv", "spear_cast_adv", "spear_cast_adv", "spear_flash_adv", "spear_cast_adv", "spear_cast_adv", "spear_idle"])
 		})
 		.add({
 			name : "ult",
 			loop : false,
-			fps : 3,
-			frames : sheet.map(["staff_idle", "staff_ult0", "staff_ult0", "staff_ult1", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult3", "staff_ult2", "staff_ult1", "staff_ult0", "staff_idle"])
+			fps : 16,
+			frames : sheet.map(["spear_idle", "spear_ult0", "spear_ult0", "spear_ult1", "spear_ult2", "spear_ult3", "spear_ult3", "spear_ult3", "spear_ult3", "spear_ult3", "spear_ult3", "spear_ult3", "spear_ult3", "spear_ult3", "spear_ult4", "spear_ult5", "spear_ult6", "spear_ult6", "spear_ult6", "spear_ult6", "spear_ult6", "spear_ult7", "spear_ult7", "spear_idle"])
 		})
 		;
 		
@@ -69,7 +69,7 @@ abstract Mage(BaseChar) to BaseChar {
 		var debuffs:Array<BaseDebuff> = [];
 		
 		var int:Interactive = {
-			shape : new Circle(769, 427, 92),
+			shape : new Circle(537, 231, 92),
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),
@@ -78,7 +78,7 @@ abstract Mage(BaseChar) to BaseChar {
 		
 		var critInfo = new CritInfo(0.25, 2);
 		
-		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xffffb600, Character.MAGE); // sprite already created
+		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xff9179ff, Character.DRAGOON); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
 			UNLOCK(this, ULT),
