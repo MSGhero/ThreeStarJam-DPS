@@ -36,13 +36,27 @@ abstract Mage(BaseChar) to BaseChar {
 			loop : false,
 			fps : 1,
 			frames : sheet.map(["staff_idle"])
-		});
+		})
+		.add({
+			name : "dot",
+			loop : false,
+			fps : 12,
+			frames : sheet.map(["staff_idle", "staff_ready_dot", "staff_ready_dot", "staff_cast_dot", "staff_cast_dot", "staff_cast_dot", "staff_cast_dot", "staff_idle"])
+		})
+		.add({
+			name : "adv",
+			loop : false,
+			fps : 6,
+			frames : sheet.map(["staff_idle", "staff_pre_adv", "staff_cast_adv", "staff_cast_adv", "staff_flash_adv", "staff_cast_adv", "staff_cast_adv", "staff_idle"])
+		})
+		;
+		
 		anim.play("idle");
 		
 		var attacks = new Vector<BaseAttack>(AttackLevel.ULT + 1);
 		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 1);
 		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 1, 0.5);
-		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 1, 3, 1, 10);
+		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 1, 3, 1, 5);
 		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 5, 10);
 		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 50, 60);
 		
@@ -61,6 +75,7 @@ abstract Mage(BaseChar) to BaseChar {
 		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xffffb600, Character.MAGE); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
+			UNLOCK(this, ADV),
 			ADD_UPDATER(this, critInfo.updater)
 		);
 	}

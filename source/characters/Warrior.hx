@@ -38,13 +38,27 @@ abstract Warrior(BaseChar) to BaseChar {
 			loop : false,
 			fps : 1,
 			frames : sheet.map(["axe_idle"])
-		});
+		})
+		.add({
+			name : "dot",
+			loop : false,
+			fps : 12,
+			frames : sheet.map(["axe_idle", "axe_windup_dot", "axe_windup_dot", "axe_swing_dot", "axe_swing_dot", "axe_swing_dot", "axe_swing_dot", "axe_idle"])
+		})
+		.add({
+			name : "adv",
+			loop : false,
+			fps : 6,
+			frames : sheet.map(["axe_idle", "axe_pre_adv", "axe_cast_adv", "axe_cast_adv", "axe_flash_adv", "axe_cast_adv", "axe_cast_adv", "axe_idle"])
+		})
+		;
+		
 		anim.play("idle");
 		
 		var attacks = new Vector<BaseAttack>(AttackLevel.ULT + 1);
 		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 1);
 		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 1, 0.5);
-		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 1, 3, 1, 10);
+		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 1, 3, 1, 5);
 		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 5, 10);
 		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 50, 60);
 		
@@ -63,7 +77,7 @@ abstract Warrior(BaseChar) to BaseChar {
 		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xfffc5c65, Character.WARRIOR); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
-			UNLOCK(this, AUTO),
+			UNLOCK(this, ADV),
 			ADD_UPDATER(this, critInfo.updater)
 		);
 	}
