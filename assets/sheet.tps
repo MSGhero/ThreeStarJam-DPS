@@ -189,6 +189,7 @@
             <key type="filename">images/archer/bow_ult4.png</key>
             <key type="filename">images/archer/bow_ult5.png</key>
             <key type="filename">images/archer/bow_ult6.png</key>
+            <key type="filename">images/archer/bow_ult7.png</key>
             <key type="filename">images/boss/shield_defend_hard.png</key>
             <key type="filename">images/boss/shield_defend_hard_solo.png</key>
             <key type="filename">images/boss/shield_defend_soft.png</key>

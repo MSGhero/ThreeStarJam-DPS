@@ -53,7 +53,7 @@ abstract Archer(BaseChar) to BaseChar {
 			name : "ult",
 			loop : false,
 			fps : 6,
-			frames : sheet.map(["bow_idle", "bow_ult0", "bow_ult1", "bow_ult2", "bow_ult3", "bow_ult4", "bow_ult5", "bow_ult5", "bow_ult5", "bow_ult5", "bow_ult6", "bow_ult6", "bow_ult6", "bow_ult6", "bow_idle"])
+			frames : sheet.map(["bow_idle", "bow_ult0", "bow_ult1", "bow_ult2", "bow_ult3", "bow_ult4", "bow_ult5", "bow_ult5", "bow_ult5", "bow_ult5", "bow_ult6", "bow_ult7", "bow_idle"])
 		})
 		;
 		

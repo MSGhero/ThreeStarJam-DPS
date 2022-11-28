@@ -38,6 +38,10 @@ class UpgradeSystem extends System {
 		}
 	};
 	
+	var skillEnt:Entity;
+	var dmgEnt:Entity;
+	var critEnt:Entity;
+	
 	public function new(ecs:Universe) {
 		super(ecs);
 		
@@ -60,7 +64,7 @@ class UpgradeSystem extends System {
 					enabled : true,
 					onOver: () -> hxd.System.setCursor(Button),
 					onOut: () -> hxd.System.setCursor(Default),
-					onSelect: () -> trace("new skill")
+					onSelect: onSkill
 				};
 				
 				var skillText = new Text(DefaultFont.get());
@@ -76,7 +80,7 @@ class UpgradeSystem extends System {
 					enabled : true,
 					onOver: () -> hxd.System.setCursor(Button),
 					onOut: () -> hxd.System.setCursor(Default),
-					onSelect: () -> trace("dmg+")
+					onSelect: onDmg
 				};
 				
 				var dmgText = new Text(DefaultFont.get());
@@ -117,12 +121,52 @@ class UpgradeSystem extends System {
 				);
 				
 				universe.setComponents(ent, anim);
-				universe.setComponents(universe.createEntity(), skillInt);
-				universe.setComponents(universe.createEntity(), dmgInt);
-				universe.setComponents(universe.createEntity(), critInt);
+				universe.setComponents(skillEnt = universe.createEntity(), skillInt);
+				universe.setComponents(dmgEnt = universe.createEntity(), dmgInt);
+				universe.setComponents(critEnt = universe.createEntity(), critInt);
 				
 			default:
 		}
+	}
+	
+	function onSkill() {
+		
+		setup(characters, {
+			
+			// add cost
+			if (hype.skill < hype.maxSkill) {
+				
+				hype.skill++;
+				
+				iterate(characters, entity -> {
+					Command.queueMany(
+						UNLOCK(entity, hype.skill)
+					);
+				});
+				
+				if (hype.skill >= hype.maxSkill) {
+					universe.deleteEntity(skillEnt);
+					skillEnt = Entity.none;
+				}
+			}
+		});
+	}
+	
+	function onDmg() {
+		
+		setup(characters, {
+			
+			// add cost
+			if (hype.dmgMult < hype.maxDmgMult) {
+				
+				hype.dmgMult++;
+				
+				if (hype.dmgMult >= hype.maxDmgMult) {
+					universe.deleteEntity(dmgEnt);
+					dmgEnt = Entity.none;
+				}
+			}
+		});
 	}
 }
 

@@ -1,5 +1,6 @@
 package attacks;
 
+import damage.Hype;
 import graphics.Animation;
 import ecs.Entity;
 import attacks.base.BaseDebuff;
@@ -12,11 +13,16 @@ import attacks.AttackCommand;
 
 class AttackSystem extends System {
 	
-	@:fastFamily
+	@:fullFamily
 	var attackInfos : {
-		attacks:Vector<BaseAttack>,
-		debuffs:Array<BaseDebuff>,
-		critInfo:CritInfo
+		resources : {
+			hype:Hype
+		},
+		requires : {
+			attacks:Vector<BaseAttack>,
+			debuffs:Array<BaseDebuff>,
+			critInfo:CritInfo
+		}
 	};
 	
 	@:fastFamily
@@ -64,18 +70,21 @@ class AttackSystem extends System {
 				switch (debuff) {
 					case DMG(amount):
 						
-						var total = amount;
-						var crit = false;
-						
-						fetch(attackInfos, caster, {
+						setup(attackInfos, {
 							
-							if (Math.random() < critInfo.getChance()) {
-								total = Std.int(total * critInfo.mult);
-								crit = true;
-							}
+							var total = amount * hype.dmgMult;
+							var crit = false;
+							
+							fetch(attackInfos, caster, {
+								
+								if (Math.random() < critInfo.getChance()) {
+									total = Std.int(total * critInfo.mult);
+									crit = true;
+								}
+							});
+							
+							Command.queue(LOG(caster, total, crit));
 						});
-						
-						Command.queue(LOG(caster, total, crit));
 						
 					case ATTACK(ba):
 						
