@@ -60,11 +60,11 @@ abstract Archer(BaseChar) to BaseChar {
 		anim.play("idle");
 		
 		var attacks = new Vector<BaseAttack>(AttackLevel.ULT + 1);
-		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 1);
-		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 1, 0.5);
-		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 1, 3, 1, 5);
-		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 5, 10);
-		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 50, 10);
+		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 2); // 2 per click
+		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 2, 0.5); // 4 per sec
+		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 5, 6, 1, 10); // 3 per sec
+		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 120, 15); // 8 per sec
+		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 200, 20); // 10 per sec
 		
 		var debuffs:Array<BaseDebuff> = [];
 		

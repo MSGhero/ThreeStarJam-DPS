@@ -43,23 +43,23 @@ class DamageSystem extends System {
 	};
 	
 	var rollingAvg:Array<DmgInstance>; // linked list prolly better here, but w/e
-	var longAvg:Array<DmgInstance>;
 	var dps:Vector<Float>;
-	var longDPS:Vector<Float>;
-	var longTime:Float = 30; // seconds of averaging
+	var maxAvg:Float;
+	var maxDPS:Vector<Float>;
 	
 	var dmgFont:Font;
 	var text:Text;
+	var hypeText:Text;
 	
 	public function new(ecs:Universe) {
 		super(ecs);
 		
 		rollingAvg = [];
-		longAvg = [];
+		maxAvg = 0;
 		
 		dps = new Vector(4);
-		longDPS = new Vector(4);
-		for (i in 0...dps.length) dps[i] = longDPS[i] = 0;
+		maxDPS = new Vector(4);
+		for (i in 0...dps.length) dps[i] = maxDPS[i] = 0;
 		
 		dmgFont = DefaultFont.get().clone();
 		dmgFont.resizeTo(24);
@@ -100,7 +100,6 @@ class DamageSystem extends System {
 						};
 						
 						rollingAvg.push(di);
-						longAvg.push(di);
 						hype.value += amount / 10;
 					});
 				});
@@ -118,7 +117,13 @@ class DamageSystem extends System {
 				
 				text = new Text(DefaultFont.get());
 				text.textAlign = Left;
+				text.textColor = 0xffffffff;
 				text.x = 15; text.y = 15;
+				
+				hypeText = new Text(dmgFont);
+				hypeText.textAlign = Left;
+				hypeText.textColor = 0xffffffff;
+				hypeText.x = 15; hypeText.y = 325;
 				
 				var up = new Updater();
 				up.duration = 0.25;
@@ -127,6 +132,7 @@ class DamageSystem extends System {
 				
 				Command.queueMany(
 					ADD_TO(text, S2D, DEFAULT),
+					ADD_TO(hypeText, S2D, DEFAULT),
 					ADD_UPDATER(universe.createEntity(), up)
 				);
 				
@@ -142,16 +148,24 @@ class DamageSystem extends System {
 			final h = hype.value;
 			
 			final overallDPS = setUpDPS(rollingAvg, dps, 1, t);
-			final longTermDPS = setUpDPS(longAvg, longDPS, longTime, t);
+			
+			if (overallDPS > maxAvg) maxAvg = overallDPS;
+			
+			for (i in 0...dps.length) {
+				if (dps[i] > maxDPS[i]) maxDPS[i] = dps[i];
+			}
 			
 			if (text != null) {
-				text.text = 'Total DPS ($longTime sec): ${formatDPS(overallDPS, 0)} (${formatDPS(longTermDPS, 1)})' +
-					'\nWarrior DPS: ${formatDPS(dps[0], 0)} (${formatDPS(longDPS[0], 1)})' +
-					'\nMage DPS: ${formatDPS(dps[1], 0)} (${formatDPS(longDPS[1], 1)})' +
-					'\nDragoon DPS: ${formatDPS(dps[2], 0)} (${formatDPS(longDPS[2], 1)})' +
-					'\nArcher DPS: ${formatDPS(dps[3], 0)} (${formatDPS(longDPS[3], 1)})' +
-					'\n\nHype: ${formatDPS(h, h < 10 ? 2 : h < 100 ? 1 : 0)}' // show decimals of hype only when relevant
+				text.text = 'Total DPS (Max): ${formatDPS(overallDPS, 0)} (${formatDPS(maxAvg, 1)})' +
+					'\nWarrior DPS: ${formatDPS(dps[0], 0)} (${formatDPS(maxDPS[0], 1)})' +
+					'\nMage DPS: ${formatDPS(dps[1], 0)} (${formatDPS(maxDPS[1], 1)})' +
+					'\nDragoon DPS: ${formatDPS(dps[2], 0)} (${formatDPS(maxDPS[2], 1)})' +
+					'\nArcher DPS: ${formatDPS(dps[3], 0)} (${formatDPS(maxDPS[3], 1)})'
 				;
+			}
+			
+			if (hypeText != null) {
+				hypeText.text = 'Hype: ${formatDPS(h, h < 10 ? 2 : h < 100 ? 1 : 0)}'; // show decimals of hype only when relevant
 			}
 		});
 	}
@@ -188,7 +202,7 @@ class DamageSystem extends System {
 		var ent = universe.createEntity();
 		
 		var text = new Text(dmgFont);
-		text.x = Math.random() * 100 + 100; // find #s
+		text.x = Math.random() * 200 + 50; // find #s
 		text.y = 200;
 		text.textAlign = Center;
 		text.text = Std.string(damage);
@@ -208,7 +222,7 @@ class DamageSystem extends System {
 			text.y = 200 - 75 * f;
 		});
 		
-		tw.duration = 2;
+		tw.duration = 1;
 		tw.repetitions = 1;
 		tw.onComplete = () -> {
 			Command.queue(REMOVE_FROM_PARENT(text)); // hope this doesn't cause memory leaks lol. better to tie to entity eventually

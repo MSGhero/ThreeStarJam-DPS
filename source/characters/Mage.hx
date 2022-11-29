@@ -60,11 +60,11 @@ abstract Mage(BaseChar) to BaseChar {
 		anim.play("idle");
 		
 		var attacks = new Vector<BaseAttack>(AttackLevel.ULT + 1);
-		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 1);
-		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 1, 0.5);
-		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 1, 3, 1, 5);
-		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 5, 10);
-		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 50, 10);
+		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 2); // 2 per click
+		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 2, 0.5); // 4 per sec
+		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 10, 3, 2, 10); // 3 per sec
+		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 80, 10); // 8 per sec
+		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 300, 30); // 10 per sec
 		
 		var debuffs:Array<BaseDebuff> = [];
 		

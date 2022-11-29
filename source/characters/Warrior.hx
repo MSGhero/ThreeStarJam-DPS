@@ -62,11 +62,11 @@ abstract Warrior(BaseChar) to BaseChar {
 		anim.play("idle");
 		
 		var attacks = new Vector<BaseAttack>(AttackLevel.ULT + 1);
-		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 1);
-		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 1, 0.5);
-		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 1, 3, 1, 5);
-		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 5, 10);
-		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 50, 10);
+		attacks[AttackLevel.BASIC] = new Click(this, BASIC, 2); // 2 per click
+		attacks[AttackLevel.AUTO] = new AutoDamage(this, AUTO, 4, 1); // 4 per sec
+		attacks[AttackLevel.DOT] = new DoTCast(this, DOT, 5, 3, 1.5, 5); // 3 per sec
+		attacks[AttackLevel.ADV] = new AutoDamage(this, ADV, 100, 12.5); // 8 per sec
+		attacks[AttackLevel.ULT] = new AutoDamage(this, ULT, 100, 10); // 10 per sec
 		
 		var debuffs:Array<BaseDebuff> = [];
 		

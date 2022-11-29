@@ -5,18 +5,12 @@ import graphics.Spritesheet;
 import graphics.Animation;
 import interactive.shapes.Circle;
 import interactive.Interactive;
-import h2d.Font;
 import attacks.CritInfo;
-import graphics.Sprite;
-import timing.Tweener;
-import timing.TimingCommand;
-import timing.Updater;
 import graphics.DisplayListCommand;
 import hxd.res.DefaultFont;
 import h2d.Text;
 import characters.Character;
 import haxe.ds.Vector;
-import haxe.Timer;
 import ecs.Entity;
 import attacks.AttackCommand;
 import command.Command;
@@ -44,6 +38,10 @@ class UpgradeSystem extends System {
 	var dmgEnt:Entity;
 	var critEnt:Entity;
 	
+	var skillText:Text;
+	var dmgText:Text;
+	var critText:Text;
+	
 	public function new(ecs:Universe) {
 		super(ecs);
 		
@@ -69,10 +67,9 @@ class UpgradeSystem extends System {
 					onSelect: onSkill
 				};
 				
-				var skillText = new Text(DefaultFont.get());
+				skillText = new Text(DefaultFont.get());
 				skillText.textAlign = Center;
-				skillText.textColor = 0xff000000;
-				skillText.text = "New Skill";
+				skillText.textColor = 0xffffffff;
 				skillText.x = 56;
 				skillText.y = 458;
 				
@@ -85,12 +82,11 @@ class UpgradeSystem extends System {
 					onSelect: onDmg
 				};
 				
-				var dmgText = new Text(DefaultFont.get());
+				dmgText = new Text(DefaultFont.get());
 				dmgText.textAlign = Center;
-				dmgText.textColor = 0xff000000;
-				dmgText.text = "More damage";
+				dmgText.textColor = 0xffffffff;
 				dmgText.x = 168;
-				dmgText.y = 422;
+				dmgText.y = 406;
 				
 				// crit boost
 				var critInt:Interactive = {
@@ -101,12 +97,13 @@ class UpgradeSystem extends System {
 					onSelect: onCrit
 				};
 				
-				var critText = new Text(DefaultFont.get());
+				critText = new Text(DefaultFont.get());
 				critText.textAlign = Center;
-				critText.textColor = 0xff000000;
-				critText.text = "More crit";
+				critText.textColor = 0xffffffff;
 				critText.x = 272;
 				critText.y = 458;
+				
+				updateText();
 				
 				var ent = universe.createEntity();
 				var anim = new Animation();
@@ -135,9 +132,9 @@ class UpgradeSystem extends System {
 		
 		setup(characters, {
 			
-			// add cost
-			if (hype.skill < hype.maxSkill) {
+			if (hype.skill < hype.maxSkill && hype.value >= hype.skillCosts[hype.skill]) {
 				
+				hype.value -= hype.skillCosts[hype.skill];
 				hype.skill++;
 				
 				iterate(characters, entity -> {
@@ -151,6 +148,8 @@ class UpgradeSystem extends System {
 					skillEnt = Entity.none;
 					hxd.System.setCursor(Default);
 				}
+				
+				updateText();
 			}
 		});
 	}
@@ -159,9 +158,9 @@ class UpgradeSystem extends System {
 		
 		setup(characters, {
 			
-			// add cost
-			if (hype.dmgMult < hype.maxDmgMult) {
+			if (hype.dmgMult < hype.maxDmgMult && hype.value >= hype.dmgCosts[hype.dmgMult - 1]) {
 				
+				hype.value -= hype.dmgCosts[hype.dmgMult - 1];
 				hype.dmgMult++;
 				
 				if (hype.dmgMult >= hype.maxDmgMult) {
@@ -183,6 +182,8 @@ class UpgradeSystem extends System {
 						}
 					}
 				});
+				
+				updateText();
 			}
 		});
 	}
@@ -191,8 +192,10 @@ class UpgradeSystem extends System {
 		
 		setup(characters, {
 			
-			if (hype.critMult < hype.maxCritMult) {
+			if (hype.critMult < hype.maxCritMult && hype.value >= hype.critCosts[hype.critLevel]) {
 				
+				hype.value -= hype.dmgCosts[hype.critLevel];
+				hype.critLevel++;
 				hype.critMult += 0.5;
 				
 				if (hype.critMult >= hype.maxCritMult) {
@@ -208,7 +211,18 @@ class UpgradeSystem extends System {
 					critInfo.chance += 0.075;
 					critInfo.updater.duration += 0.5;
 				});
+				
+				updateText();
 			}
+		});
+	}
+	
+	function updateText() {
+		
+		setup(characters, {
+			skillText.text = hype.skill < hype.maxSkill ? 'New Skill\nHype cost: ${hype.skillCosts[hype.skill]}' : "4/4";
+			dmgText.text = hype.dmgMult < hype.maxDmgMult ? 'More Damage\nHype cost: ${hype.dmgCosts[hype.dmgMult - 1]}' : "9/9";
+			critText.text = hype.critLevel < hype.maxCritLevel ? 'Bigger Crits\nHype cost: ${hype.critCosts[hype.critLevel]}' : "6/6";
 		});
 	}
 }
