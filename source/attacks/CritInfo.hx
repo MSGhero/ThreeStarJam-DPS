@@ -18,10 +18,10 @@ class CritInfo {
 		updater = new Updater();
 		updater.autoDispose = false;
 		updater.paused = true;
+		updater.duration = 3;
 	}
 	
 	public function start() {
-		updater.duration = 3;
 		updater.repetitions = 1;
 		updater.paused = false;
 		updater.resetCounter();

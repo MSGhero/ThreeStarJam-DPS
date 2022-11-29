@@ -57,7 +57,7 @@ class AttackSystem extends System {
 				});
 				
 				fetch(anims, char, {
-					if (!anim.isActive) { // can't override anything, so no need to check for higher prio anims
+					if (!anim.isActive) { // shouldn't override anything, so no need to check for higher prio anims
 						anim.play("attack");
 					}
 				});

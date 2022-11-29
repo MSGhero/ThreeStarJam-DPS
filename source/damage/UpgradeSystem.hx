@@ -1,5 +1,6 @@
 package damage;
 
+import attacks.base.BaseAttack;
 import graphics.Spritesheet;
 import graphics.Animation;
 import interactive.shapes.Circle;
@@ -32,6 +33,7 @@ class UpgradeSystem extends System {
 			hype:Hype
 		},
 		requires : {
+			attacks:Vector<BaseAttack>,
 			char:Character,
 			color:Int,
 			critInfo:CritInfo
@@ -96,7 +98,7 @@ class UpgradeSystem extends System {
 					enabled : true,
 					onOver: () -> hxd.System.setCursor(Button),
 					onOut: () -> hxd.System.setCursor(Default),
-					onSelect: () -> trace("crit+")
+					onSelect: onCrit
 				};
 				
 				var critText = new Text(DefaultFont.get());
@@ -147,6 +149,7 @@ class UpgradeSystem extends System {
 				if (hype.skill >= hype.maxSkill) {
 					universe.deleteEntity(skillEnt);
 					skillEnt = Entity.none;
+					hxd.System.setCursor(Default);
 				}
 			}
 		});
@@ -164,7 +167,47 @@ class UpgradeSystem extends System {
 				if (hype.dmgMult >= hype.maxDmgMult) {
 					universe.deleteEntity(dmgEnt);
 					dmgEnt = Entity.none;
+					hxd.System.setCursor(Default);
 				}
+				
+				iterate(characters, {
+					
+					var prevFactor = (1 - 1 / 36 * (hype.dmgMult - 1)); // speed up attacks a little
+					var factor = (1 - 1 / 36 * hype.dmgMult); // kinda messes with the animations going too fast, so don't do that lol
+					
+					for (atk in attacks) {
+						atk.updater.duration *= factor / prevFactor;
+						switch (atk.debuff) {
+							case ATTACK(ba): ba.updater.duration *= factor / prevFactor; // speed up dot as well
+							default:
+						}
+					}
+				});
+			}
+		});
+	}
+	
+	function onCrit() {
+		
+		setup(characters, {
+			
+			if (hype.critMult < hype.maxCritMult) {
+				
+				hype.critMult += 0.5;
+				
+				if (hype.critMult >= hype.maxCritMult) {
+					hype.critMult = hype.maxCritMult;
+					universe.deleteEntity(critEnt);
+					critEnt = Entity.none;
+					hxd.System.setCursor(Default);
+				}
+				
+				iterate(characters, {
+					// bigger crits more often with less manual effort
+					critInfo.mult = hype.critMult;
+					critInfo.chance += 0.075;
+					critInfo.updater.duration += 0.5;
+				});
 			}
 		});
 	}

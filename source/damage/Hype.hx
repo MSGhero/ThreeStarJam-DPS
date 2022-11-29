@@ -12,6 +12,9 @@ class Hype {
 	public var dmgMult:Int;
 	public var maxDmgMult:Int;
 	
+	public var critMult:Float;
+	public var maxCritMult:Float;
+	
 	public function new() {
 		
 		value = 0;
@@ -21,5 +24,8 @@ class Hype {
 		
 		dmgMult = 1;
 		maxDmgMult = 10;
+		
+		critMult = 2;
+		maxCritMult = 5;
 	}
 }
