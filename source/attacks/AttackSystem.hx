@@ -1,5 +1,6 @@
 package attacks;
 
+import characters.Boss;
 import damage.Hype;
 import graphics.Animation;
 import ecs.Entity;
@@ -16,7 +17,8 @@ class AttackSystem extends System {
 	@:fullFamily
 	var attackInfos : {
 		resources : {
-			hype:Hype
+			hype:Hype,
+			boss:Boss
 		},
 		requires : {
 			attacks:Vector<BaseAttack>,
@@ -62,6 +64,14 @@ class AttackSystem extends System {
 					}
 				});
 				
+				setup(attackInfos, {
+					fetch(anims, boss, {
+						if (!anim.isActive) {
+							anim.play(Math.random() < 0.5 ? "def_hard" : "def_soft");
+						}
+					});
+				});
+				
 			case UNLOCK(char, level):
 				fetch(attackInfos, char, {
 					attacks[level].enable();
@@ -80,6 +90,12 @@ class AttackSystem extends System {
 								if (Math.random() < critInfo.getChance()) {
 									total = Std.int(total * critInfo.mult);
 									crit = true;
+								}
+							});
+							
+							fetch(anims, boss, {
+								if (!anim.isActive) {
+									anim.play(Math.random() < 0.5 ? "def_hard" : "def_soft");
 								}
 							});
 							

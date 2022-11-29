@@ -78,7 +78,7 @@ abstract Mage(BaseChar) to BaseChar {
 		
 		var critInfo = new CritInfo(0.25, 2);
 		
-		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xffffb600, Character.MAGE); // sprite already created
+		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xffecbc43, Character.MAGE); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
 			ADD_UPDATER(this, critInfo.updater)

@@ -78,7 +78,7 @@ abstract Dragoon(BaseChar) to BaseChar {
 		
 		var critInfo = new CritInfo(0.25, 2);
 		
-		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xff9179ff, Character.DRAGOON); // sprite already created
+		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xff5934ff, Character.DRAGOON); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
 			ADD_UPDATER(this, critInfo.updater)

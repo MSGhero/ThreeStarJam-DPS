@@ -80,7 +80,7 @@ abstract Warrior(BaseChar) to BaseChar {
 			onSelect: () -> Command.queue(CLICK(this))
 		};
 		
-		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xfffc5c65, Character.WARRIOR); // sprite already created
+		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xff96060d, Character.WARRIOR); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
 			ADD_UPDATER(this, critInfo.updater)

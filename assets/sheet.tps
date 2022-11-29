@@ -227,7 +227,7 @@
             <key type="filename">images/mage/staff_ult2.png</key>
             <key type="filename">images/mage/staff_ult3.png</key>
             <key type="filename">images/mage/staff_ult4.png</key>
-            <key type="filename">images/ui/upgrade.png</key>
+            <key type="filename">images/ui/bg.png</key>
             <key type="filename">images/warrior/axe_cast_adv.png</key>
             <key type="filename">images/warrior/axe_crit.png</key>
             <key type="filename">images/warrior/axe_flash_adv.png</key>

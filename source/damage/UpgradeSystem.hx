@@ -109,7 +109,7 @@ class UpgradeSystem extends System {
 				var anim = new Animation();
 				
 				setup(characters, {
-					anim.add({ name : "default", fps : 1, loop : false, frames : sheet.map(["upgrade"]) }); // don't like this
+					anim.add({ name : "default", fps : 1, loop : false, frames : sheet.map(["bg"]) }); // don't like this
 				});
 				
 				Command.queueMany(
@@ -209,7 +209,7 @@ class UpgradeSystem extends System {
 					// bigger crits more often with less manual effort
 					critInfo.mult = hype.critMult;
 					critInfo.chance += 0.075;
-					critInfo.updater.duration += 0.5;
+					critInfo.updater.duration += 0.75;
 				});
 				
 				updateText();

@@ -78,7 +78,7 @@ abstract Archer(BaseChar) to BaseChar {
 		
 		var critInfo = new CritInfo(0.25, 2);
 		
-		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xff37d98c, Character.ARCHER); // sprite already created
+		ecs.setComponents(this, anim, attacks, debuffs, int, critInfo, 0xff06703d, Character.ARCHER); // sprite already created
 		Command.queueMany(
 			UNLOCK(this, BASIC),
 			ADD_UPDATER(this, critInfo.updater)

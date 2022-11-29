@@ -202,10 +202,12 @@ class DamageSystem extends System {
 		var ent = universe.createEntity();
 		
 		var text = new Text(dmgFont);
-		text.x = Math.random() * 200 + 50; // find #s
-		text.y = 200;
+		text.x = Math.random() * 180 + 75;
+		text.y = 180 - Math.random() * 20;
 		text.textAlign = Center;
 		text.text = Std.string(damage);
+		
+		var y = text.y;
 		
 		if (crit) {
 			fetch(characters, caster, {
@@ -219,10 +221,10 @@ class DamageSystem extends System {
 		
 		var tw = new Tweener(f -> {
 			text.alpha = 1 - f * f;
-			text.y = 200 - 75 * f;
+			text.y = y - 75 * f;
 		});
 		
-		tw.duration = 1;
+		tw.duration = 0.75;
 		tw.repetitions = 1;
 		tw.onComplete = () -> {
 			Command.queue(REMOVE_FROM_PARENT(text)); // hope this doesn't cause memory leaks lol. better to tie to entity eventually

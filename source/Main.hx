@@ -1,5 +1,6 @@
 package;
 
+import characters.Boss;
 import characters.Dragoon;
 import characters.Archer;
 import damage.CritUI;
@@ -123,6 +124,8 @@ class Main extends App {
 		new Archer(ecs, sheet);
 		new Dragoon(ecs, sheet);
 		
+		var boss = new Boss(ecs, sheet);
+		
 		var input = new Input();
 		var kmap = new InputMapping();
 		kmap[Action.SELECT] = [Key.SPACE, Key.Z, Key.F, Key.ENTER];
@@ -132,7 +135,7 @@ class Main extends App {
 		input.addDevice(new MouseInput(mmap));
 		
 		var crits = ["axe_crit", "staff_crit", "spear_crit", "bow_crit"].map(s -> new CritUI(s, ecs, sheet));
-		ecs.setResources(crits, sheet);
+		ecs.setResources(crits, sheet, boss);
 		
 		Command.queueMany(
 			ADD_INPUT(input, P1),
