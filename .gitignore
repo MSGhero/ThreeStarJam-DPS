@@ -2,3 +2,4 @@
 .ecs_invalidation
 source/Main.hx
 *.kra
+assets.pak

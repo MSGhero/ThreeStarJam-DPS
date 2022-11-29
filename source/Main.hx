@@ -56,13 +56,26 @@ class Main extends App {
 	var lastStamp:Float;
 	
 	static function main() {
-		Res.initEmbed();
+		#if !js
+		Res.initPak();
+		#end
 		new Main();
 	}
 	
-	// need realinit for when assets need to load
-	
 	override function init() {
+		
+		@:privateAccess haxe.MainLoop.add(() -> {}); // bug that prevents sound from playing past 1 sec
+		
+		#if !js
+		realInit();
+		#else
+		ResTools.initPakAuto("assets", () -> {
+			realInit();
+		}, p -> { });
+		#end
+	}
+	
+	function realInit() {
 		
 		engine.backgroundColor = 0xff888888;
 		
@@ -114,7 +127,7 @@ class Main extends App {
 	function postInit() {
 		
 		var sheet = new Spritesheet();
-		sheet.loadTexturePackerData(Res.images.sheet, Res.data.sheet.entry.getText(), "default");
+		sheet.loadTexturePackerData(Res.sheets.sheet, Res.data.sheet.entry.getText(), "default");
 		
 		Command.queueMany(
 			ADD_PARENT(s2d, S2D),

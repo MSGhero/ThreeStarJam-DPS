@@ -27,7 +27,7 @@ class AudioSystem extends System {
 	};
 	
 	@:fullFamily
-	var mute : {
+	var inputs : {
 		resources : {
 			manager:Manager
 		},
@@ -79,31 +79,27 @@ class AudioSystem extends System {
 					// untyped for now
 					untyped switch (type) {
 						case MUSIC:
-							channel = manager.play(snd);
+							channel = snd.play(info.loop, info.volume * volumeInfo.musicMult);
 							info.tag = useTag ? tag : "music";
-							info.volume *= volumeInfo.musicMult;
 							taggedSounds.set(info.tag, channel);
 						case VOICE:
-							channel = manager.play(snd);
+							channel = snd.play(info.loop, info.volume * volumeInfo.voiceMult);
 							info.tag = useTag ? tag : "voice";
-							info.volume *= volumeInfo.voiceMult;
 							taggedSounds.set(info.tag, channel);
 						case SFX:
-							channel = manager.play(snd, sfxGroup);
+							channel = snd.play(info.loop, info.volume * volumeInfo.sfxMult);
 							if (useTag) {
 								info.tag = tag;
 								taggedSounds.set(info.tag, channel);
 							}
 							else info.tag = "sfx";
-							info.volume *= volumeInfo.sfxMult;
 						case UI:
-							channel = manager.play(snd, uiGroup);
+							channel = snd.play(info.loop, info.volume * volumeInfo.uiMult);
 							if (useTag) {
 								info.tag = tag;
 								taggedSounds.set(info.tag, channel);
 							}
 							else info.tag = "ui";
-							info.volume *= volumeInfo.uiMult;
 					}
 					
 					universe.setComponents(universe.createEntity(), channel, info);
@@ -125,12 +121,12 @@ class AudioSystem extends System {
 	override function update(dt:Float) {
 		super.update(dt);
 		
-		setup(mute, {
-			iterate(mute, {
-				if (input.actions.justPressed.MUTE) {
-					trace("K");
+		setup(inputs, {
+			iterate(inputs, {
+				if (input.justPressed.MUTE) {
 					manager.suspended = !manager.suspended;
 				}
+				// need to implement vol up/down along with reset vol command
 			});
 		});
 	}

@@ -12,4 +12,7 @@ enum abstract Action(Int) from Int to Int {
 	
 	var DEBUG;
 	var MUTE;
+	
+	var VOL_UP;
+	var VOL_DOWN;
 }
