@@ -1,5 +1,8 @@
 package;
 
+import audio.AudioVolume;
+import hxd.snd.Manager;
+import audio.AudioCommand;
 import characters.Boss;
 import characters.Dragoon;
 import characters.Archer;
@@ -35,6 +38,7 @@ import interactive.InteractiveSystem;
 import attacks.AttackSystem;
 import damage.DamageSystem;
 import damage.UpgradeSystem;
+import audio.AudioSystem;
 import timing.Updater;
 
 class Main extends App {
@@ -78,17 +82,18 @@ class Main extends App {
 						AnimSystem,
 						TimingSystem,
 						InteractiveSystem,
+						AudioSystem,
 						CommandSystem // we usually want this to be the final system
 					]
 				}
 			]
 		});
 		
-		var hype = 0.0;
-		
 		ecs.setResources(
 			([]:Array<Command>), // command queue needs to be added before enabling everyone
-			new Hype() // hype meter
+			new Hype(), // hype meter
+			Manager.get(), // sound manager
+			({ music : 1 }:AudioVolume) // volume of different audio types
 		);
 		
 		updatePhase = ecs.getPhase("update");
@@ -129,6 +134,7 @@ class Main extends App {
 		var input = new Input();
 		var kmap = new InputMapping();
 		kmap[Action.SELECT] = [Key.SPACE, Key.Z, Key.F, Key.ENTER];
+		kmap[Action.MUTE] = [Key.M];
 		input.addDevice(new KeyboardInput(kmap));
 		var mmap = new InputMapping();
 		mmap[Action.SELECT] = [Key.MOUSE_LEFT, Key.MOUSE_RIGHT];
@@ -142,7 +148,8 @@ class Main extends App {
 			VISIBILITY(crits[0], false),
 			VISIBILITY(crits[1], false),
 			VISIBILITY(crits[2], false),
-			VISIBILITY(crits[3], false)
+			VISIBILITY(crits[3], false),
+			PLAY(MUSIC, "audio/music/1122420_Streambeat.ogg", true, 1, "")
 		);
 	}
 	

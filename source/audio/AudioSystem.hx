@@ -11,6 +11,7 @@ import hxd.snd.Channel;
 import input.Input;
 import audio.AudioCommand;
 
+// this one isn't done, but it's decent now
 class AudioSystem extends System {
 	
 	@:fullFamily
@@ -47,19 +48,6 @@ class AudioSystem extends System {
 		uiGroup = new SoundGroup("ui");
 		
 		taggedSounds = new StringMap();
-		
-		// what do i actually want here
-		// volume sliders
-		// fade in/out
-		// dynamic volume separate from sliders (fade kinda fits this)
-		// play via command
-		// clean up ended tracks
-		// pause all in category/group
-		// stop individual (voice, music) -> or is this better represented by vol=0
-		// will i need music and voice groups? let's say no
-		// maybe tying sfx to existing entities would make things easier? like this specific sfx ends when its entity gets deleted
-		// or hey registering them by name in addition to the normal play process
-		// ideally they get cleaned up after playing. maybe that's another compo
 	}
 	
 	override function onEnabled() {
@@ -93,10 +81,12 @@ class AudioSystem extends System {
 						case MUSIC:
 							channel = manager.play(snd);
 							info.tag = useTag ? tag : "music";
+							info.volume *= volumeInfo.musicMult;
 							taggedSounds.set(info.tag, channel);
 						case VOICE:
 							channel = manager.play(snd);
 							info.tag = useTag ? tag : "voice";
+							info.volume *= volumeInfo.voiceMult;
 							taggedSounds.set(info.tag, channel);
 						case SFX:
 							channel = manager.play(snd, sfxGroup);
@@ -105,6 +95,7 @@ class AudioSystem extends System {
 								taggedSounds.set(info.tag, channel);
 							}
 							else info.tag = "sfx";
+							info.volume *= volumeInfo.sfxMult;
 						case UI:
 							channel = manager.play(snd, uiGroup);
 							if (useTag) {
@@ -112,6 +103,7 @@ class AudioSystem extends System {
 								taggedSounds.set(info.tag, channel);
 							}
 							else info.tag = "ui";
+							info.volume *= volumeInfo.uiMult;
 					}
 					
 					universe.setComponents(universe.createEntity(), channel, info);
@@ -136,6 +128,7 @@ class AudioSystem extends System {
 		setup(mute, {
 			iterate(mute, {
 				if (input.actions.justPressed.MUTE) {
+					trace("K");
 					manager.suspended = !manager.suspended;
 				}
 			});
