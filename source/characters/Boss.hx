@@ -1,5 +1,6 @@
 package characters;
 
+import api.APICommand;
 import graphics.RenderCommand;
 import command.Command;
 import interactive.shapes.Circle;
@@ -43,7 +44,7 @@ abstract Boss(Entity) to Entity {
 			enabled : true,
 			onOver: () -> hxd.System.setCursor(Button),
 			onOut: () -> hxd.System.setCursor(Default),
-			onSelect: () -> trace("K")
+			onSelect: () -> Command.queue(UNLOCK_MEDAL(71858))
 		};
 		
 		ecs.setComponents(this, anim, int);

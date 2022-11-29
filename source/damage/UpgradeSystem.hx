@@ -1,5 +1,7 @@
 package damage;
 
+import io.newgrounds.NG;
+import api.APICommand;
 import attacks.base.BaseAttack;
 import graphics.Spritesheet;
 import graphics.Animation;
@@ -34,6 +36,13 @@ class UpgradeSystem extends System {
 		}
 	};
 	
+	@:fullFamily
+	var api : {
+		resources : {
+			ng:NG
+		}
+	};
+	
 	var skillEnt:Entity;
 	var dmgEnt:Entity;
 	var critEnt:Entity;
@@ -51,6 +60,7 @@ class UpgradeSystem extends System {
 		super.onEnabled();
 		
 		Command.register(PARENTS_SET_UP, handleDLC);
+		Command.register(UNLOCK_MEDAL(0), handleAPIC);
 	}
 	
 	function handleDLC(dlc:DisplayListCommand) {
@@ -106,10 +116,15 @@ class UpgradeSystem extends System {
 				updateText();
 				
 				var ent = universe.createEntity();
+				skillEnt = universe.createEntity();
+				dmgEnt = universe.createEntity();
+				critEnt = universe.createEntity();
+				
 				var anim = new Animation();
 				
 				setup(characters, {
 					anim.add({ name : "default", fps : 1, loop : false, frames : sheet.map(["bg"]) }); // don't like this
+					anim.play("default");
 				});
 				
 				Command.queueMany(
@@ -120,9 +135,9 @@ class UpgradeSystem extends System {
 				);
 				
 				universe.setComponents(ent, anim);
-				universe.setComponents(skillEnt = universe.createEntity(), skillInt);
-				universe.setComponents(dmgEnt = universe.createEntity(), dmgInt);
-				universe.setComponents(critEnt = universe.createEntity(), critInt);
+				universe.setComponents(skillEnt, skillInt);
+				universe.setComponents(dmgEnt, dmgInt);
+				universe.setComponents(critEnt, critInt);
 				
 			default:
 		}
@@ -144,9 +159,15 @@ class UpgradeSystem extends System {
 				});
 				
 				if (hype.skill >= hype.maxSkill) {
+					
 					universe.deleteEntity(skillEnt);
 					skillEnt = Entity.none;
 					hxd.System.setCursor(Default);
+					
+					// all upgraded
+					if (dmgEnt == Entity.none && critEnt == Entity.none) {
+						Command.queue(UNLOCK_MEDAL(71857));
+					}
 				}
 				
 				updateText();
@@ -164,9 +185,15 @@ class UpgradeSystem extends System {
 				hype.dmgMult++;
 				
 				if (hype.dmgMult >= hype.maxDmgMult) {
+					
 					universe.deleteEntity(dmgEnt);
 					dmgEnt = Entity.none;
 					hxd.System.setCursor(Default);
+					
+					// all upgraded
+					if (skillEnt == Entity.none && critEnt == Entity.none) {
+						Command.queue(UNLOCK_MEDAL(71857));
+					}
 				}
 				
 				iterate(characters, {
@@ -192,17 +219,23 @@ class UpgradeSystem extends System {
 		
 		setup(characters, {
 			
-			if (hype.critMult < hype.maxCritMult && hype.value >= hype.critCosts[hype.critLevel]) {
+			if (hype.critLevel < hype.maxCritLevel && hype.value >= hype.critCosts[hype.critLevel]) {
 				
 				hype.value -= hype.dmgCosts[hype.critLevel];
 				hype.critLevel++;
 				hype.critMult += 0.5;
 				
-				if (hype.critMult >= hype.maxCritMult) {
+				if (hype.critLevel >= hype.maxCritLevel) {
+					
 					hype.critMult = hype.maxCritMult;
 					universe.deleteEntity(critEnt);
 					critEnt = Entity.none;
 					hxd.System.setCursor(Default);
+					
+					// all upgraded
+					if (skillEnt == Entity.none && dmgEnt == Entity.none) {
+						Command.queue(UNLOCK_MEDAL(71857));
+					}
 				}
 				
 				iterate(characters, {
@@ -224,6 +257,20 @@ class UpgradeSystem extends System {
 			dmgText.text = hype.dmgMult < hype.maxDmgMult ? 'More Damage\nHype cost: ${hype.dmgCosts[hype.dmgMult - 1]}' : "9/9";
 			critText.text = hype.critLevel < hype.maxCritLevel ? 'Bigger Crits\nHype cost: ${hype.critCosts[hype.critLevel]}' : "6/6";
 		});
+	}
+	
+	function handleAPIC(apic:APICommand) {
+		
+		switch (apic) {
+			case UNLOCK_MEDAL(id):
+				setup(api, {
+					var medal = ng.medals.getById(id);
+					if (!medal.unlocked) {
+						medal.sendUnlock();
+						trace('got medal $id');
+					}
+				});
+		}
 	}
 }
 

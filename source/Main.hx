@@ -1,5 +1,7 @@
 package;
 
+import haxe.Timer;
+import io.newgrounds.NG;
 import audio.AudioVolume;
 import hxd.snd.Manager;
 import audio.AudioCommand;
@@ -40,6 +42,7 @@ import damage.DamageSystem;
 import damage.UpgradeSystem;
 import audio.AudioSystem;
 import timing.Updater;
+import utils.ResTools;
 
 class Main extends App {
 	
@@ -55,6 +58,8 @@ class Main extends App {
 	
 	var lastStamp:Float;
 	
+	var loadedIn:Bool;
+	
 	static function main() {
 		#if !js
 		Res.initPak();
@@ -64,18 +69,37 @@ class Main extends App {
 	
 	override function init() {
 		
+		loadedIn = false; // some stuff is null at the beginning on JS
 		@:privateAccess haxe.MainLoop.add(() -> {}); // bug that prevents sound from playing past 1 sec
 		
 		#if !js
 		realInit();
 		#else
-		ResTools.initPakAuto("assets", () -> {
+		ResTools.initPakAuto("assets", () -> { // i need to write my own
 			realInit();
 		}, p -> { });
 		#end
 	}
 	
 	function realInit() {
+		
+		// ng login
+		// login info is in pak file to obfuscate a bit
+		var login = Res.data.login.entry.getText().split("\n");
+		var appid = StringTools.trim(login[0]);
+		var key = StringTools.trim(login[1]);
+		
+		NG.createAndCheckSession(appid);
+		NG.core.setupEncryption(key);
+		
+		if (!NG.core.loggedIn) {
+			NG.core.requestLogin(
+				out -> {
+					if (out.match(SUCCESS)) postLogin();
+					else NG.core.onLogin.addOnce(postLogin);
+				}
+			);
+		}
 		
 		engine.backgroundColor = 0xff888888;
 		
@@ -106,7 +130,7 @@ class Main extends App {
 			([]:Array<Command>), // command queue needs to be added before enabling everyone
 			new Hype(), // hype meter
 			Manager.get(), // sound manager
-			({ music : 1 }:AudioVolume) // volume of different audio types
+			({ music : 0.4 }:AudioVolume) // volume of different audio types
 		);
 		
 		updatePhase = ecs.getPhase("update");
@@ -126,8 +150,12 @@ class Main extends App {
 	
 	function postInit() {
 		
+		loadedIn = true;
+		
 		var sheet = new Spritesheet();
 		sheet.loadTexturePackerData(Res.sheets.sheet, Res.data.sheet.entry.getText(), "default");
+		
+		ecs.setResources(sheet);
 		
 		Command.queueMany(
 			ADD_PARENT(s2d, S2D),
@@ -137,12 +165,16 @@ class Main extends App {
 		);
 		
 		// characters add themselves to the screen and appropriate families
+		// this actually puts them below the background layer... since that is delayed due to the command
+		var boss = new Boss(ecs, sheet);
 		new Warrior(ecs, sheet);
 		new Mage(ecs, sheet);
 		new Archer(ecs, sheet);
 		new Dragoon(ecs, sheet);
 		
-		var boss = new Boss(ecs, sheet);
+		var crits = ["axe_crit", "staff_crit", "spear_crit", "bow_crit"].map(s -> new CritUI(s, ecs, sheet));
+		
+		ecs.setResources(crits, boss);
 		
 		var input = new Input();
 		var kmap = new InputMapping();
@@ -152,9 +184,6 @@ class Main extends App {
 		var mmap = new InputMapping();
 		mmap[Action.SELECT] = [Key.MOUSE_LEFT, Key.MOUSE_RIGHT];
 		input.addDevice(new MouseInput(mmap));
-		
-		var crits = ["axe_crit", "staff_crit", "spear_crit", "bow_crit"].map(s -> new CritUI(s, ecs, sheet));
-		ecs.setResources(crits, sheet, boss);
 		
 		Command.queueMany(
 			ADD_INPUT(input, P1),
@@ -172,7 +201,7 @@ class Main extends App {
 		var dt = newTime - lastStamp;
 		lastStamp = newTime;
 		
-		if (isDisposed) return;
+		if (isDisposed || !loadedIn) return;
 		
 		update(dt);
 	}
@@ -206,5 +235,15 @@ class Main extends App {
 		s2d.render(engine);
 		
 		// trace("draw calls: " + engine.drawCalls);
+	}
+	
+	function postLogin() {
+		trace("logged in");
+		NG.core.requestMedals(out2 -> {
+			if (out2.match(SUCCESS)) {
+				trace("got medals");
+				ecs.setResources(NG.core); // add ng once loaded
+			}
+		});
 	}
 }

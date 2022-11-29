@@ -8,6 +8,7 @@
 -lib heaps
 -lib hlsdl
 -lib ecs
+-lib newgrounds
 
 -hl export/hl/ThreeStarJam.hl
 -main Main

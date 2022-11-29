@@ -3,3 +3,7 @@
 source/Main.hx
 *.kra
 assets.pak
+assets/data/login.txt
+export/bin.zip
+export/js/ThreeStarJam.js
+export/js/ThreeStarJam.js.map

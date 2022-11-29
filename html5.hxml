@@ -7,6 +7,8 @@
 
 -lib heaps
 -lib ecs
+-lib newgrounds
+-lib stb_ogg_sound
 
 -js export/js/ThreeStarJam.js
 -main Main
