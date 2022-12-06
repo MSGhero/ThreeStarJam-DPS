@@ -221,7 +221,7 @@ class UpgradeSystem extends System {
 			
 			if (hype.critLevel < hype.maxCritLevel && hype.value >= hype.critCosts[hype.critLevel]) {
 				
-				hype.value -= hype.dmgCosts[hype.critLevel];
+				hype.value -= hype.critCosts[hype.critLevel];
 				hype.critLevel++;
 				hype.critMult += 0.5;
 				
