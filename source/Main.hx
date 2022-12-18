@@ -134,8 +134,6 @@ class Main extends App {
 		);
 		
 		updatePhase = ecs.getPhase("update");
-		// this requires some mods to the ECS lib that won't get approved for merge. i need to work on a better solution still
-		updatePhase.enableSystems(); // enable in post so commandsys can set itself up before onEnabled()s
 		updatePhase.enable();
 		
 		lastStamp = haxe.Timer.stamp();
